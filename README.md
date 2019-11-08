@@ -2,7 +2,7 @@
 
 ## Description
 
-Active-Sound is sharing platform that allows musicians to share their creations.
+Active-Sound is sharing platform that allows musicians to share their creations. This platform uses java 11.
 
 ## Deadline
 
