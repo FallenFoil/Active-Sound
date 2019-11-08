@@ -4,9 +4,13 @@
 
 Active-Sound is sharing platform that allows musicians to share their creations. This platform uses java 11.
 
+---
+
 ## Deadline
 
 * __3 de janeiro 2020__
+
+---
 
 ## Functionalities
 
@@ -21,6 +25,8 @@ Active-Sound is sharing platform that allows musicians to share their creations.
   * __Nº downloads__.
 * Fazer download de uma música dando o __id__;
 * Um cliente não pode ter mais do que um __socket__.
+
+---
 
 ## Extras
 
@@ -40,6 +46,8 @@ Active-Sound is sharing platform that allows musicians to share their creations.
 
 * Não se pode assumir que os ficheiros cabem todos na memória;
 * Ter um tamanho __limite__ (_MAXSIZE_) em bytes, no cliente e no servidor.
+
+---
 
 ## Contributors
 
