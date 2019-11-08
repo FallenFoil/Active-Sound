@@ -41,7 +41,7 @@ Active-Sound is sharing platform that allows musicians to share their creations.
 * Não se pode assumir que os ficheiros cabem todos na memória;
 * Ter um tamanho __limite__ (_MAXSIZE_) em bytes, no cliente e no servidor.
 
-# Contributors
+## Contributors
 
 * [__Luís Macedo__](https://github.com/FallenFoil);
 * [__Ângelo Sousa__](https://github.com/AngeloACSousa).
