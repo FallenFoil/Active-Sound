@@ -1,6 +1,8 @@
 package Client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -9,49 +11,75 @@ public class Client {
     private static void authentication(PrintWriter out){
         Menu menu = new Menu("ActiveSound");
 
-        menu.addOption("Login", new Menu.CallBack() {
-            @Override
-            public void run() {
-                System.out.print("Username:\n$ ");
-                Scanner scan = new Scanner(System.in);
-                String username = scan.nextLine();
-                System.out.print("Password:\n$ ");
-                String password = scan.nextLine();
+        menu.addOption("Login", ()->{
+            System.out.print("Username:\n$ ");
+            Scanner scan = new Scanner(System.in);
+            String username = scan.nextLine();
+            System.out.print("Password:\n$ ");
+            String password = scan.nextLine();
 
-                String str = "0|" + username + "|" + password;
+            String str = "0|" + username + "|" + password;
 
-                out.println(str);
-                out.flush();
-            }
+            out.println(str);
+            out.flush();
         });
 
-        menu.addOption("Register", new Menu.CallBack() {
-            @Override
-            public void run() {
-                System.out.println("You have choosen the Register option");
-            }
+        menu.addOption("Register", ()->{
+            System.out.println("You have choosen the Register option");
         });
 
-        menu.addOption("Exit", new Menu.CallBack() {
-            @Override
-            public void run() {
-                System.out.println("You have choosen the Exit option");
-            }
+        menu.addOption("Exit", ()->{
+            System.out.println("You have choosen the Exit option");
         });
 
         menu.start();
     }
 
-    public static void main(String[] args) throws IOException{
-        Socket s = new Socket("127.0.0.1", 25567);
+    private static Thread in(Socket s){
+        return new Thread(()->{
+            try{
+                BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
-        //BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        PrintWriter out = new PrintWriter(s.getOutputStream());
+                String str = in.readLine();
 
-        authentication(out);
+                while(!str.equals("shutdown")){
+                    System.out.println(str);
+                    str = in.readLine();
+                }
 
-        s.shutdownOutput();
-        //s.shutdownInput();
-        s.close();
+                System.out.println("Shutting Down");
+
+                s.shutdownOutput();
+                s.shutdownInput();
+                s.close();
+            }
+            catch (IOException e){
+                System.out.println(e.getMessage());
+            }
+        });
+    }
+
+    private static Thread out(Socket s){
+        return new Thread(()->{
+            try{
+                PrintWriter out = new PrintWriter(s.getOutputStream());
+
+                authentication(out);
+            }
+            catch (IOException e){
+                System.out.println(e.getMessage());
+            }
+        });
+    }
+
+    public static void main(String[] args){
+        try {
+            Socket s = new Socket("127.0.0.1", 25567);
+            in(s).start();
+            out(s).start();
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 }
