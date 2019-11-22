@@ -45,5 +45,7 @@ Active-Sound is sharing platform that allows musicians to share their creations.
 
 ## Contributors
 
-* [__Luís Macedo__](https://github.com/FallenFoil);
-* [__Ângelo Sousa__](https://github.com/AngeloACSousa).
+* [__Luís Macedo__](https://github.com/FallenFoil)
+* [__Ângelo Sousa__](https://github.com/AngeloACSousa)
+* [__Rafael Martins__](https://github.com/AROM98)
+* [__Diogo Monteiro__](https://github.com/DxMonteiro)
