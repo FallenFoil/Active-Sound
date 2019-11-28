@@ -7,9 +7,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ServerClient implements Runnable{
+    private ActiveSound app;
     private Socket so;
 
-    public ServerClient(Socket so){
+    public ServerClient(ActiveSound newApp, Socket so){
+        this.app = newApp;
         this.so = so;
     }
 
@@ -21,7 +23,20 @@ public class ServerClient implements Runnable{
             PrintWriter out = new PrintWriter(this.so.getOutputStream());
 
             String str = in.readLine();
-            System.out.println(str);
+
+            while(!str.equals("quit")){
+                String[] args = str.split("[|]");
+                System.out.println(args[0] + " " + args[1] + " " + args[2]);
+                switch (args[0]){
+                    case "0":
+                        out.println("0|" + this.app.login(args[1], args[2], this.so).toString());
+                        out.flush();
+                        break;
+                    default:
+                        break;
+                }
+                str = in.readLine();
+            }
 
             out.println("shutdown");
             out.flush();

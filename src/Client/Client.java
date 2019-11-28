@@ -29,10 +29,21 @@ public class Client {
         });
 
         menu.addOption("Exit", ()->{
-            System.out.println("You have choosen the Exit option");
+            out.println("quit");
+            out.flush();
         });
 
         menu.start();
+    }
+
+    private static Menu mainMenu(){
+        Menu menu = new Menu("ActiveSound");
+
+        menu.addOption("Exit", ()->{
+            System.out.println("Ola Cesar");
+        });
+
+        return menu;
     }
 
     private static Thread in(Socket s){
@@ -44,6 +55,17 @@ public class Client {
 
                 while(!str.equals("shutdown")){
                     System.out.println(str);
+                    String[] args = str.split("[|]");
+                    switch (args[0]){
+                        case "0":
+                            String[] responseArgs = args[1].split("=");
+                            boolean response = Boolean.parseBoolean(responseArgs[0]);
+                            System.out.println(responseArgs[1]);
+                            mainMenu().start();
+                            break;
+                        default:
+                            break;
+                    }
                     str = in.readLine();
                 }
 
@@ -63,7 +85,6 @@ public class Client {
         return new Thread(()->{
             try{
                 PrintWriter out = new PrintWriter(s.getOutputStream());
-
                 authentication(out);
             }
             catch (IOException e){

@@ -7,9 +7,10 @@ public class Server {
     public static void main(String[] args){
         try{
             ServerSocket s = new ServerSocket(25567);
+            ActiveSound app = new ActiveSound();
 
             while(true){
-                new Thread(new ServerClient(s.accept())).start();
+                new Thread(new ServerClient(app, s.accept())).start();
             }
         }
         catch (IOException e) {
