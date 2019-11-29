@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    private static void authentication(PrintWriter out){
+    private static Menu authentication(PrintWriter out){
         Menu menu = new Menu("ActiveSound");
 
         menu.addOption("Login", ()->{
@@ -33,10 +33,10 @@ public class Client {
             out.flush();
         });
 
-        menu.start();
+        return menu;
     }
 
-    private static Menu mainMenu(){
+    private static Menu mainMenu(PrintWriter out){
         Menu menu = new Menu("ActiveSound");
 
         menu.addOption("Exit", "exit;color=150,0,0;", ()->{
@@ -83,7 +83,7 @@ public class Client {
         return new Thread(()->{
             try{
                 PrintWriter out = new PrintWriter(s.getOutputStream());
-                authentication(out);
+                authentication(out).start();
             }
             catch (IOException e){
                 System.out.println(e.getMessage());

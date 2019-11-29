@@ -4,31 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Music {
-    /*int id
-* String titulo
-* String autor
-* int ano
-* List\<String> etiquetas
-* int nDownloads
-* String path
-* int size;*/
+    private int id;
+    private String title;
+    private String author;
+    private int year;
+    private List<String> tags;
+    private int nDownloads;
+    private String path;
+    private int size;
 
-    int id;
-    String titulo;
-    String autor;
-    int ano;
-    List<String> etiquetas;
-    int nDownloads;
-    String path;
-    int size;
-
-    public Music(int id, String titulo, String autor, int ano, List<String> etiquetas,
-                 int nDownloads, String path, int size){
-
+    public Music(int id, String titulo, String autor, int ano, List<String> etiquetas, int nDownloads, String path, int size){
         this.id = id;
-        this.titulo = titulo;
-        this.autor = autor;
-        this.etiquetas = new ArrayList<>(etiquetas);
+        this.title = titulo;
+        this.author = autor;
+        this.tags = new ArrayList<>(etiquetas);
         this.nDownloads = nDownloads;
         this.path = path;
         this.size = size;
@@ -38,32 +27,32 @@ public class Music {
         return id;
     }
 
-    public int getAno() {
-        return ano;
+    public String getTitle() {
+        return title;
     }
 
-    public int getSize() {
-        return size;
+    public String getAuthor() {
+        return author;
     }
 
-    public int getnDownloads() {
+    public int getYear() {
+        return year;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public int getNDownloads() {
         return nDownloads;
-    }
-
-    public String getAutor() {
-        return autor;
     }
 
     public String getPath() {
         return path;
     }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public List<String> getEtiquetas() {
-        return etiquetas;
+    public int size() {
+        return size;
     }
 
     public void downloadIncrement(){
