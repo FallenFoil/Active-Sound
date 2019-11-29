@@ -2,6 +2,7 @@ package Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Music {
     private int id;
@@ -12,6 +13,7 @@ public class Music {
     private int nDownloads;
     private String path;
     private int size;
+    public ReentrantLock musicLock = new ReentrantLock();
 
     public Music(int id, String titulo, String autor, int ano, List<String> etiquetas, int nDownloads, String path, int size){
         this.id = id;

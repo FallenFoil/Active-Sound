@@ -2,6 +2,7 @@ package Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class User {
 
@@ -9,6 +10,7 @@ public class User {
     private String password;
     private List<Integer> downloads;
     private List<Integer> uploads;
+    public ReentrantLock userLock = new ReentrantLock();
 
     public User(String name, String password){
         this.username = name;

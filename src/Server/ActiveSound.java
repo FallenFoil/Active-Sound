@@ -1,63 +1,47 @@
 package Server;
 
-import Data.Music;
-import Data.User;
+import Data.*;
 import javafx.util.Pair;
 
 import java.net.Socket;
 import java.util.HashMap;
 
 public class ActiveSound {
-    private HashMap<String, User> users;
-    private HashMap<Integer, Music> musics;
-    private HashMap<String, Socket> onlineUsers;
+    private Users users;
+    private Musics musics;
+    private OnlineUsers onlineUsers;
 
     public ActiveSound(){
-        this.users = new HashMap<>();
-        this.musics = new HashMap<>();
-        this.onlineUsers = new HashMap<>();
-        this.users.put("admin", new User("admin", "admin"));
+        this.users = new Users();
+        this.musics = new Musics();
+        this.onlineUsers = new OnlineUsers();
+        this.users.put("admin", "admin");
     }
 
     public HashMap<Integer, Music> getMusics() {
-        return musics;
+        return musics.getMusics();
     }
 
     public HashMap<String, User> getUsers() {
-        return users;
+        return users.getUsers();
     }
 
-    public void addUser(User user){
-        users.put(user.getName(),user);
-    }
 
-    public void addMusic(Music music){
-        musics.put(music.getId(),music);
-    }
-
-    public User getUser(String name){
-        return users.get(name);
-    }
-
-    public Music getMusic(int id){
-        return musics.get(id);
-    }
-
-    public Pair<Boolean, String> login(String username, String password, Socket socket){
-        if(this.onlineUsers.containsKey(username)){
-            return new Pair<>(false, "User is already logged in!");
+    public String login(String username, String password, Socket socket){
+        if(this.onlineUsers.contains(username)){
+            return "User is already logged in!";
         }
 
-        if(!this.users.containsKey(username)){
-            return new Pair<>(false, "User is not registered!");
+        if(!this.users.contains(username)){
+            return "User is not registered!";
         }
 
         if(this.users.get(username).authentication(password)){
             this.onlineUsers.put(username, socket);
-            return new Pair<>(true,"User logged in!");
+            return "User logged in!";
         }
 
-        return new Pair<>(false, "Some error occorred logging in!");
+        return "Some error occorred logging in!";
     }
 
 }
