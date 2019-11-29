@@ -1,110 +1,96 @@
 package Client;
 
-import java.util.ArrayList;
+import javafx.util.Pair;
+
 import java.util.InputMismatchException;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Scanner;
 
-public class Menu{
+public class Menu {
+    //Defines
+    private static final int exit = 0;
+    private static final int textColor = 1;
+
     private String name;
     private int nOptions;
-    private ArrayList<CallBack> callBacks;
-    private ArrayList<String> options;
+    private Map<Integer, String> menuOptions;
+    private Map<Integer, Map<Integer, String>> optionSettings;
+    private Map<Integer, CallBack> callBacks;
 
     public Menu(){
-        this.nOptions = 0;
-        this.callBacks = new ArrayList<>();
-        this.options = new ArrayList<>();
+        this.nOptions = 1;
+        this.menuOptions = new HashMap<>();
+        this.optionSettings = new HashMap<>();
+        this.callBacks = new HashMap<>();
     }
 
     public Menu(String newName){
         this.name = newName;
-        this.nOptions = 0;
-        this.callBacks = new ArrayList<>();
-        this.options = new ArrayList<>();
+        this.nOptions = 1;
+        this.menuOptions = new HashMap<>();
+        this.optionSettings = new HashMap<>();
+        this.callBacks = new HashMap<>();
     }
 
     public void start(String newName){
         //Header
-        System.out.print("*");
-        for(int i=0; i<newName.length()*3; i++){
-            System.out.print("*");
+        StringBuilder header = new StringBuilder("*");
+        for(int i=0; i<name.length()*3; i++){
+            header.append("*");
         }
-        System.out.println("*");
+        header.append("*\n*");
 
-        System.out.print("*");
-        for(int i=0; i<newName.length(); i++){
-            System.out.print(" ");
+        for(int i=0; i<name.length(); i++){
+            header.append(" ");
         }
-        System.out.print(newName);
-        for(int i=0; i<newName.length(); i++){
-            System.out.print(" ");
+        header.append(newName);
+        for(int i=0; i<name.length(); i++){
+            header.append(" ");
         }
-        System.out.println("*");
+        header.append("*\n");
 
-        System.out.print("*");
-        for(int i=0; i<newName.length()*3; i++){
-            System.out.print("*");
+        header.append("*");
+        for(int i=0; i<name.length()*3; i++){
+            header.append("*");
         }
-        System.out.println("*");
+        header.append("*\n");
 
         //Boddy
-        for(int w=0; w<this.options.size(); w++){
-            System.out.print("  " + w+1 + ")");
+        StringBuilder body = new StringBuilder();
+        for(int j=1; j<=this.menuOptions.size(); j++){
+            int w = j;
+
+            if(!this.menuOptions.containsKey(w)){
+                w = 0;
+            }
+
+            int optionNumber = w;
+            String str = "";
+            if(this.optionSettings.containsKey(w)){
+                if(this.optionSettings.get(w).containsKey(this.exit)){
+                    optionNumber = 0;
+                }
+                if(this.optionSettings.get(w).containsKey(this.textColor)){
+                    str = this.optionSettings.get(w).get(this.textColor);
+                }
+            }
+            body.append("  " + optionNumber + ")");
             for(int i=0; i< 5; i++){
-                System.out.print(" ");
+                body.append(" ");
             }
             if(this.nOptions/10 < 1 ){
-                System.out.print(" ");
+                body.append(" ");
             }
 
-            System.out.print(this.options.get(w));
+            body.append(str + this.menuOptions.get(optionNumber) + "\u001B[0m");
 
-            System.out.print("\n");
+            body.append("\n");
         }
-    }
 
-    public void start(){
-        //Header
-        System.out.print("*");
-        for(int i=0; i<name.length()*3; i++){
-            System.out.print("*");
-        }
-        System.out.println("*");
-
-        System.out.print("*");
-        for(int i=0; i<name.length(); i++){
-            System.out.print(" ");
-        }
-        System.out.print(name);
-        for(int i=0; i<name.length(); i++){
-            System.out.print(" ");
-        }
-        System.out.println("*");
-
-        System.out.print("*");
-        for(int i=0; i<name.length()*3; i++){
-            System.out.print("*");
-        }
-        System.out.println("*");
-
-        //Boddy
-        for(int w=0; w<this.options.size(); w++){
-            System.out.print("  " + w + ")");
-            for(int i=0; i< 5; i++){
-                System.out.print(" ");
-            }
-            if(this.nOptions/10 < 1 ){
-                System.out.print(" ");
-            }
-
-            System.out.print(this.options.get(w));
-
-            System.out.print("\n");
-        }
+        System.out.print(header.toString() + body.toString() + "$ ");
 
         //Scanner
-        System.out.print("$ ");
-
         Scanner in = new Scanner(System.in);
         int op = -1;
 
@@ -117,15 +103,125 @@ public class Menu{
         }
     }
 
+    public void start(){
+        //Header
+        StringBuilder header = new StringBuilder("*");
+        for(int i=0; i<name.length()*3; i++){
+            header.append("*");
+        }
+        header.append("*\n*");
+
+        for(int i=0; i<name.length(); i++){
+            header.append(" ");
+        }
+        header.append(name);
+        for(int i=0; i<name.length(); i++){
+            header.append(" ");
+        }
+        header.append("*\n");
+
+        header.append("*");
+        for(int i=0; i<name.length()*3; i++){
+            header.append("*");
+        }
+        header.append("*\n");
+
+        //Boddy
+        StringBuilder body = new StringBuilder();
+        for(int j=1; j<=this.menuOptions.size(); j++){
+            int w = j;
+
+            if(!this.menuOptions.containsKey(w)){
+                w = 0;
+            }
+
+            int optionNumber = w;
+            String str = "";
+            if(this.optionSettings.containsKey(w)){
+                if(this.optionSettings.get(w).containsKey(this.exit)){
+                    optionNumber = 0;
+                }
+                if(this.optionSettings.get(w).containsKey(this.textColor)){
+                    str = this.optionSettings.get(w).get(this.textColor);
+                }
+            }
+            body.append("  " + optionNumber + ")");
+            for(int i=0; i< 5; i++){
+                body.append(" ");
+            }
+            if(this.nOptions/10 < 1 ){
+                body.append(" ");
+            }
+
+            body.append(str + this.menuOptions.get(optionNumber) + "\u001B[0m");
+
+            body.append("\n");
+        }
+
+        System.out.print(header.toString() + body.toString() + "$ ");
+
+        //Scanner
+        Scanner in = new Scanner(System.in);
+        int op = -1;
+
+        try {
+            op = in.nextInt();
+            this.callBacks.get(op).run();
+        }
+        catch (NumberFormatException | InputMismatchException e){
+            System.out.println("Input Inválido");
+        }
+    }
+
+    private Pair<Boolean, Map<Integer, String>> parseOptions(String settings){
+        String[] args = settings.split("[;]");
+        Map<Integer, String> list = new HashMap<>();
+        boolean exit = false;
+
+        for(int i=0; i<args.length; i++){
+            String[] moreArgs = args[i].split("[=]");
+            switch (moreArgs[0].toLowerCase().replaceAll("\\s+", "")){
+                case "exit":
+                    list.put(this.exit, "true");
+                    exit = true;
+                    break;
+                case "color":
+                    String[] rgb = moreArgs[1].replaceAll("\\s+", "").split("[,]");
+                    list.put(this.textColor, "\u001B[38;2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return new Pair<>(exit, list);
+    }
 
     public void addOption(String name, CallBack callBack){
+        this.menuOptions.put(this.nOptions, name);
+        this.callBacks.put(this.nOptions, callBack);
         this.nOptions++;
-        this.callBacks.add(callBack);
-        this.options.add(name);
+    }
+
+    public void addOption(String name, String settings, CallBack callBack){
+        Pair<Boolean, Map<Integer, String>> pair = parseOptions(settings);
+
+        if(pair.getKey()){
+            this.menuOptions.put(0, name);
+            this.callBacks.put(0, callBack);
+            this.optionSettings.put(0, pair.getValue());
+        }
+        else{
+            this.menuOptions.put(this.nOptions, name);
+            this.callBacks.put(this.nOptions, callBack);
+            this.optionSettings.put(this.nOptions, pair.getValue());
+            this.nOptions++;
+        }
+
     }
 
 
-    public interface CallBack {
+    interface CallBack {
         public void run();
     }
 }

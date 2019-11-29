@@ -28,7 +28,7 @@ public class Client {
             System.out.println("You have choosen the Register option");
         });
 
-        menu.addOption("Exit", ()->{
+        menu.addOption("Exit", "exit;color=150,0,0;", ()->{
             out.println("quit");
             out.flush();
         });
@@ -39,14 +39,14 @@ public class Client {
     private static Menu mainMenu(){
         Menu menu = new Menu("ActiveSound");
 
-        menu.addOption("Exit", ()->{
+        menu.addOption("Exit", "exit;color=150,0,0;", ()->{
             System.out.println("Ola Cesar");
         });
 
         return menu;
     }
 
-    private static Thread in(Socket s){
+    private static Thread read(Socket s){
         return new Thread(()->{
             try{
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -58,10 +58,8 @@ public class Client {
                     String[] args = str.split("[|]");
                     switch (args[0]){
                         case "0":
-                            String[] responseArgs = args[1].split("=");
-                            boolean response = Boolean.parseBoolean(responseArgs[0]);
-                            System.out.println(responseArgs[1]);
-                            mainMenu().start();
+
+
                             break;
                         default:
                             break;
@@ -81,7 +79,7 @@ public class Client {
         });
     }
 
-    private static Thread out(Socket s){
+    private static Thread write(Socket s){
         return new Thread(()->{
             try{
                 PrintWriter out = new PrintWriter(s.getOutputStream());
@@ -96,8 +94,8 @@ public class Client {
     public static void main(String[] args){
         try {
             Socket s = new Socket("127.0.0.1", 25567);
-            in(s).start();
-            out(s).start();
+            read(s).start();
+            write(s).start();
         }
         catch(IOException e){
             System.out.println(e.getMessage());
