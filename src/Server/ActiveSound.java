@@ -27,21 +27,31 @@ public class ActiveSound {
     }
 
 
-    public String login(String username, String password, Socket socket){
-        if(this.onlineUsers.contains(username)){
-            return "User is already logged in!";
-        }
+    public void login(String username, String password, Socket socket)
+            throws UserAlreadyOnlineException, UserNotRegisteredException{
 
-        if(!this.users.contains(username)){
-            return "User is not registered!";
-        }
+            if(!this.users.contains(username)){
+                throw new UserNotRegisteredException();
+            }
 
-        if(this.users.get(username).authentication(password)){
-            this.onlineUsers.put(username, socket);
-            return "User logged in!";
-        }
+            if(this.onlineUsers.contains(username)){
+                throw new UserAlreadyOnlineException();
+            }
 
-        return "Some error occorred logging in!";
+            if(this.users.get(username).authentication(password)){
+                onlineUsers.onlineLock.lock();
+                this.onlineUsers.put(username, socket);
+                onlineUsers.onlineLock.unlock();
+            }
+
+    }
+
+    public void register(String username, String password) throws UserAlreadyRegisteredException{
+        if(!users.contains(username)){
+            users.usersLock.lock();
+            users.put(username,password);
+            users.usersLock.unlock();
+        }else throw new UserAlreadyRegisteredException();
     }
 
 }

@@ -29,8 +29,14 @@ public class ServerClient implements Runnable{
                 System.out.println(args[0] + " " + args[1] + " " + args[2]);
                 switch (args[0]){
                     case "0":
-                        out.println("0|" + this.app.login(args[1], args[2], this.so).toString());
-                        out.flush();
+                        try {
+                            this.app.login(args[1],args[2],this.so);
+                            out.println("0|Sucess");
+                            out.flush();
+                        } catch (Exception e){
+                            out.println("0|"+e.getMessage());
+                            out.flush();
+                        }
                         break;
                     default:
                         break;

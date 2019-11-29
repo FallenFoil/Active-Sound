@@ -54,11 +54,15 @@ public class Client {
                 String str = in.readLine();
 
                 while(!str.equals("shutdown")){
-                    System.out.println(str);
+                    //System.out.println(str);
                     String[] args = str.split("[|]");
                     switch (args[0]){
                         case "0":
-
+                            if(args[1].equals("Sucess")){
+                                System.out.println("Sucess");
+                            }else{
+                                System.out.println(args[1]);
+                            }
 
                             break;
                         default:
