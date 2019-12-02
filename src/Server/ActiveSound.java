@@ -27,15 +27,14 @@ public class ActiveSound {
     }
 
 
-    public void login(String username, String password, Socket socket)
-            throws UserAlreadyOnlineException, UserNotRegisteredException{
+    public void login(String username, String password, Socket socket) throws UserAlreadyOnlineException, UserNotRegisteredException{
 
             if(!this.users.contains(username)){
-                throw new UserNotRegisteredException();
+                throw new UserNotRegisteredException(username);
             }
 
             if(this.onlineUsers.contains(username)){
-                throw new UserAlreadyOnlineException();
+                throw new UserAlreadyOnlineException(username);
             }
 
             if(this.users.get(username).authentication(password)){
@@ -51,7 +50,10 @@ public class ActiveSound {
             users.usersLock.lock();
             users.put(username,password);
             users.usersLock.unlock();
-        }else throw new UserAlreadyRegisteredException();
+        }
+        else{
+            throw new UserAlreadyRegisteredException(username);
+        }
     }
 
 }

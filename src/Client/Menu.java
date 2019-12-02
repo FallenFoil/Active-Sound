@@ -1,10 +1,8 @@
 package Client;
 
-import javafx.util.Pair;
-
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Menu {
@@ -173,17 +171,15 @@ public class Menu {
         }
     }
 
-    private Pair<Boolean, Map<Integer, String>> parseOptions(String settings){
+    private Map<Integer, String> parseOptions(String settings){
         String[] args = settings.split("[;]");
         Map<Integer, String> list = new HashMap<>();
-        boolean exit = false;
 
         for(int i=0; i<args.length; i++){
             String[] moreArgs = args[i].split("[=]");
             switch (moreArgs[0].toLowerCase().replaceAll("\\s+", "")){
                 case "exit":
                     list.put(this.exit, "true");
-                    exit = true;
                     break;
                 case "color":
                     String[] rgb = moreArgs[1].replaceAll("\\s+", "").split("[,]");
@@ -194,7 +190,7 @@ public class Menu {
             }
         }
 
-        return new Pair<>(exit, list);
+        return list;
     }
 
     public void addOption(String name, CallBack callBack){
@@ -204,24 +200,30 @@ public class Menu {
     }
 
     public void addOption(String name, String settings, CallBack callBack){
-        Pair<Boolean, Map<Integer, String>> pair = parseOptions(settings);
+        Map<Integer, String> map = parseOptions(settings);
 
-        if(pair.getKey()){
+        if(map.get(0).equals("true")){
             this.menuOptions.put(0, name);
             this.callBacks.put(0, callBack);
-            this.optionSettings.put(0, pair.getValue());
+            this.optionSettings.put(0, map);
         }
         else{
             this.menuOptions.put(this.nOptions, name);
             this.callBacks.put(this.nOptions, callBack);
-            this.optionSettings.put(this.nOptions, pair.getValue());
+            this.optionSettings.put(this.nOptions, map);
             this.nOptions++;
         }
 
     }
 
+    public void clear(){
+        this.nOptions = 1;
+        this.menuOptions.clear();
+        this.optionSettings.clear();
+        this.callBacks.clear();
+    }
 
-    interface CallBack {
+    public interface CallBack {
         public void run();
     }
 }

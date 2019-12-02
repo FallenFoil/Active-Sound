@@ -1,7 +1,7 @@
 package Data;
 
 public class UserNotRegisteredException extends Exception {
-    public UserNotRegisteredException(){
-        super();
+    public UserNotRegisteredException(String user){
+        super("User doesn't exists: " + user);
     }
 }

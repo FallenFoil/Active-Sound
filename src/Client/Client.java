@@ -6,64 +6,124 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Client {
-    private static Menu authentication(PrintWriter out){
-        Menu menu = new Menu("ActiveSound");
+    private Socket socket;
+    private ReentrantLock lock;
+    private Condition condition;
+    private volatile Menu menu;
+    private BufferedReader in;
+    private PrintWriter out;
+    private boolean quit;
 
-        menu.addOption("Login", ()->{
-            System.out.print("Username:\n$ ");
+    public Client(Socket newSocket){
+        this.socket = newSocket;
+        this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
+        this.menu = null;
+        this.quit = false;
+        try{
+            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.out = new PrintWriter(this.socket.getOutputStream());
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void authentication(){
+        this.menu = new Menu("ActiveSound");
+
+        this.menu.addOption("Login", ()->{
             Scanner scan = new Scanner(System.in);
+            System.out.print("Username:\n$ ");
             String username = scan.nextLine();
             System.out.print("Password:\n$ ");
             String password = scan.nextLine();
 
             String str = "0|" + username + "|" + password;
 
-            out.println(str);
-            out.flush();
+            this.out.println(str);
+            this.out.flush();
         });
 
-        menu.addOption("Register", ()->{
-            System.out.println("You have choosen the Register option");
+        this.menu.addOption("Register", ()->{
+            Scanner scan = new Scanner(System.in);
+            System.out.print("Username:\n$ ");
+            String username = scan.nextLine();
+            System.out.print("Password:\n$ ");
+            String password = scan.nextLine();
+
+            String str = "1|" + username + "|" + password;
+
+            this.out.println(str);
+            this.out.flush();
         });
 
-        menu.addOption("Exit", "exit;color=150,0,0;", ()->{
-            out.println("quit");
-            out.flush();
+        this.menu.addOption("Exit", "exit;color=150,0,0;", ()->{
+            this.out.println("quit");
+            this.out.flush();
         });
-
-        return menu;
     }
 
-    private static Menu mainMenu(PrintWriter out){
-        Menu menu = new Menu("ActiveSound");
-
-        menu.addOption("Exit", "exit;color=150,0,0;", ()->{
-            System.out.println("Ola Cesar");
+    private void mainMenu(){
+        this.menu.addOption("Search", ()->{
+            System.out.println("Search");
         });
 
-        return menu;
+        this.menu.addOption("Download", ()->{
+            System.out.println("Download");
+        });
+
+        this.menu.addOption("Upload", ()->{
+            System.out.println("Upload");
+        });
+
+        this.menu.addOption("Log Out", ()->{
+            System.out.println("Log Out");
+        });
+
+        this.menu.addOption("Exit App", ()->{
+            this.out.println("quit");
+            this.out.flush();
+        });
     }
 
-    private static Thread read(Socket s){
+    private Thread read(){
         return new Thread(()->{
             try{
-                BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-
-                String str = in.readLine();
-
+                String str = this.in.readLine();
                 while(!str.equals("shutdown")){
-                    //System.out.println(str);
                     String[] args = str.split("[|]");
                     switch (args[0]){
                         case "0":
                             if(args[1].equals("Sucess")){
-                                System.out.println("Sucess");
-                            }else{
+                                System.out.println("Welcome, " + args[2]);
+                                this.lock.lock();
+                                this.menu.clear();
+                                mainMenu();
+                                this.condition.signal();
+                                this.lock.unlock();
+                            }
+                            else{
+                                System.out.println(args[1]);
+                                this.lock.lock();
+                                this.condition.signal();
+                                this.lock.unlock();
+                            }
+                            break;
+                        case "1":
+                            if(args[1].equals("Sucess")){
+                                System.out.println("User " + args[2] + " has been registered");
+                            }
+                            else{
                                 System.out.println(args[1]);
                             }
-
+                            this.lock.lock();
+                            this.condition.signal();
+                            this.lock.unlock();
                             break;
                         default:
                             break;
@@ -72,25 +132,38 @@ public class Client {
                 }
 
                 System.out.println("Shutting Down");
+                this.lock.lock();
+                this.quit = true;
+                this.condition.signal();
+                this.lock.unlock();
 
-                s.shutdownOutput();
-                s.shutdownInput();
-                s.close();
+                this.socket.shutdownOutput();
+                this.socket.shutdownInput();
+                this.socket.close();
             }
-            catch (IOException e){
+            catch (IOException e) {
                 System.out.println(e.getMessage());
             }
         });
     }
 
-    private static Thread write(Socket s){
+    private Thread write(){
         return new Thread(()->{
-            try{
-                PrintWriter out = new PrintWriter(s.getOutputStream());
-                authentication(out).start();
-            }
-            catch (IOException e){
-                System.out.println(e.getMessage());
+            while(!this.quit){
+                try{
+                    this.lock.lock();
+                    if(this.menu == null){
+                        authentication();
+                    }
+                    this.menu.start();
+                    this.condition.await();
+                }
+                catch(InterruptedException e){
+                    System.out.println(e.getMessage());
+                }
+                finally{
+                    this.lock.unlock();
+                }
             }
         });
     }
@@ -98,8 +171,9 @@ public class Client {
     public static void main(String[] args){
         try {
             Socket s = new Socket("127.0.0.1", 25567);
-            read(s).start();
-            write(s).start();
+            Client client = new Client(s);
+            client.read().start();
+            client.write().start();
         }
         catch(IOException e){
             System.out.println(e.getMessage());

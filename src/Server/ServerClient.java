@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import Data.UserAlreadyOnlineException;
+import Data.UserAlreadyRegisteredException;
+import Data.UserNotRegisteredException;
 
 public class ServerClient implements Runnable{
     private ActiveSound app;
@@ -31,10 +34,22 @@ public class ServerClient implements Runnable{
                     case "0":
                         try {
                             this.app.login(args[1],args[2],this.so);
-                            out.println("0|Sucess");
+                            out.println("0|Sucess|"+args[1]);
                             out.flush();
-                        } catch (Exception e){
-                            out.println("0|"+e.getMessage());
+                        }
+                        catch (UserAlreadyOnlineException | UserNotRegisteredException e){
+                            out.println("0|" + e.getMessage());
+                            out.flush();
+                        }
+                        break;
+                    case "1":
+                        try{
+                            this.app.register(args[1],args[2]);
+                            out.println("1|Sucess|"+args[1]);
+                            out.flush();
+                        }
+                        catch(UserAlreadyRegisteredException e){
+                            out.println("1|" + e.getMessage());
                             out.flush();
                         }
                         break;
