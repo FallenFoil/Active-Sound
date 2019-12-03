@@ -5,15 +5,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Musics {
     private HashMap<Integer, Music> musics;
-    private ReentrantLock musicsLock = new ReentrantLock();
+    private ReentrantLock musicsLock;
     int newId;
 
     public Musics(){
         musics = new HashMap<>();
+        musicsLock = new ReentrantLock();
         newId = 0;
     }
     public HashMap<Integer, Music> getMusics() {
-        return musics;
+        return new HashMap<>(musics);
     }
 
     public void add(Music music){

@@ -11,7 +11,7 @@ public class User {
     private List<Integer> downloads;
     private List<Integer> uploads;
     private boolean online;
-    public ReentrantLock userLock = new ReentrantLock();
+    public ReentrantLock userLock;
 
     public User(String name, String password){
         this.username = name;
@@ -19,6 +19,7 @@ public class User {
         this.downloads = new ArrayList<>();
         this.uploads = new ArrayList<>();
         this.online = false;
+        userLock = new ReentrantLock();
     }
 
     public User(String name, String password, List<Integer> downloads, List<Integer> uploads){
@@ -34,11 +35,11 @@ public class User {
     }
 
     public List<Integer> getDownloads(){
-        return downloads;
+        return new ArrayList<>(downloads);
     }
 
     public List<Integer> getUploads(){
-        return uploads;
+        return new ArrayList<>(uploads);
     }
 
     public void addDownload(int id){

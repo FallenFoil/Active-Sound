@@ -43,7 +43,7 @@ public class Music {
     }
 
     public List<String> getTags() {
-        return tags;
+        return new ArrayList<>(tags);
     }
 
     public int getNDownloads() {
