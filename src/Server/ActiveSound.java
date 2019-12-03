@@ -5,8 +5,7 @@ import javafx.util.Pair;
 
 import java.net.Socket;
 import java.util.HashMap;
-
-public class ActiveSound {
+public class ActiveSound implements Data.ActiveSound {
     private Users users;
     private Musics musics;
 
@@ -58,4 +57,13 @@ public class ActiveSound {
         }
     }
 
+    @Override
+    public void logOff(String username) {
+
+    }
+
+    @Override
+    public void upload(String path) {
+
+    }
 }
