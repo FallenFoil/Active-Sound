@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import Data.InvalidPasswordException;
 import Data.UserAlreadyOnlineException;
 import Data.UserAlreadyRegisteredException;
 import Data.UserNotRegisteredException;
@@ -40,6 +42,8 @@ public class ServerClient implements Runnable{
                         catch (UserAlreadyOnlineException | UserNotRegisteredException e){
                             out.println("0|" + e.getMessage());
                             out.flush();
+                        } catch (InvalidPasswordException e) {
+                            e.printStackTrace();
                         }
                         break;
                     case "1":
