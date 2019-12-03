@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Users {
-    public ReentrantLock usersLock = new ReentrantLock();
+    private ReentrantLock usersLock;
     private HashMap<String, User> users;
 
     public Users(){
         users = new HashMap<>();
+        usersLock = new ReentrantLock();
     }
 
     public void put(String username, String password){
@@ -19,12 +20,20 @@ public class Users {
         return users.get(username);
     }
 
+
     public boolean contains(String username){
         return users.containsKey(username);
     }
 
+    public void lock(){
+        usersLock.lock();
+    }
+
+    public void unlock(){
+        usersLock.unlock();
+    }
 
     public HashMap<String, User> getUsers() {
-        return users;
+        return new HashMap<>(users);
     }
 }

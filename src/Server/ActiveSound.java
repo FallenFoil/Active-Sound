@@ -9,12 +9,10 @@ import java.util.HashMap;
 public class ActiveSound {
     private Users users;
     private Musics musics;
-    private OnlineUsers onlineUsers;
 
     public ActiveSound(){
         this.users = new Users();
         this.musics = new Musics();
-        this.onlineUsers = new OnlineUsers();
         this.users.put("admin", "admin");
     }
 
@@ -27,29 +25,33 @@ public class ActiveSound {
     }
 
 
-    public void login(String username, String password, Socket socket) throws UserAlreadyOnlineException, UserNotRegisteredException{
+    public void login(String username, String password, Socket socket)
+            throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
 
             if(!this.users.contains(username)){
                 throw new UserNotRegisteredException(username);
             }
 
-            if(this.onlineUsers.contains(username)){
+            if(this.users.get(username).isOnline()){
                 throw new UserAlreadyOnlineException(username);
             }
 
             if(this.users.get(username).authentication(password)){
-                onlineUsers.onlineLock.lock();
-                this.onlineUsers.put(username, socket);
-                onlineUsers.onlineLock.unlock();
+
+                users.lock();
+                users.put(username,password);
+                users.get(username).online();
+                users.unlock();
             }
+            else throw new InvalidPasswordException();
 
     }
 
     public void register(String username, String password) throws UserAlreadyRegisteredException{
         if(!users.contains(username)){
-            users.usersLock.lock();
+            users.lock();
             users.put(username,password);
-            users.usersLock.unlock();
+            users.lock();
         }
         else{
             throw new UserAlreadyRegisteredException(username);

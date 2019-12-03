@@ -13,7 +13,7 @@ public class Music {
     private int nDownloads;
     private String path;
     private int size;
-    public ReentrantLock musicLock = new ReentrantLock();
+    public ReentrantLock musicLock;
 
     public Music(int id, String titulo, String autor, int ano, List<String> etiquetas, int nDownloads, String path, int size){
         this.id = id;
@@ -23,6 +23,7 @@ public class Music {
         this.nDownloads = nDownloads;
         this.path = path;
         this.size = size;
+        musicLock = new ReentrantLock();
     }
 
     public int getId() {
@@ -58,9 +59,16 @@ public class Music {
     }
 
     public void downloadIncrement(){
-        synchronized (this){
-            nDownloads++;
-        }
+        lock();
+        nDownloads++;
+        unlock();
+    }
+
+    public void lock(){
+        musicLock.lock();
+    }
+    public void unlock(){
+        musicLock.unlock();
     }
 
 }
