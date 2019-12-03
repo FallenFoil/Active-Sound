@@ -3,6 +3,7 @@ package Server;
 import Data.*;
 import javafx.util.Pair;
 
+import java.io.FileNotFoundException;
 import java.net.Socket;
 import java.util.HashMap;
 public class ActiveSound implements Data.ActiveSound {
@@ -63,7 +64,12 @@ public class ActiveSound implements Data.ActiveSound {
     }
 
     @Override
-    public void upload(String path) {
+    public void upload(String path) throws FileNotFoundException {
+
+    }
+
+    @Override
+    public void download(String path) throws FileNotFoundException {
 
     }
 }
