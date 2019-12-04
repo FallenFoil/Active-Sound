@@ -14,7 +14,9 @@ public class Musics {
         newId = 0;
     }
     public HashMap<Integer, Music> getMusics() {
-        return new HashMap<>(musics);
+        synchronized (this) {
+            return new HashMap<>(musics);
+        }
     }
 
     public void add(Music music){
@@ -23,7 +25,9 @@ public class Musics {
         unlock();
     }
     public Music get(int id){
-       return musics.get(id);
+        synchronized (this) {
+            return musics.get(id);
+        }
     }
 
 

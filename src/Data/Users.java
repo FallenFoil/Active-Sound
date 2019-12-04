@@ -13,16 +13,21 @@ public class Users {
     }
 
     public void put(String username, String password){
+        lock();
         users.put(username,new User(username,password));
+        unlock();
     }
 
     public User get(String username){
-        return users.get(username);
+        synchronized (this) {
+            return users.get(username);
+        }
     }
 
-
     public boolean contains(String username){
-        return users.containsKey(username);
+        synchronized (this) {
+            return users.containsKey(username);
+        }
     }
 
     public void lock(){

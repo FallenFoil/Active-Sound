@@ -19,6 +19,7 @@ public class Music {
         this.id = id;
         this.title = titulo;
         this.author = autor;
+        this.year = ano;
         this.tags = new ArrayList<>(etiquetas);
         this.nDownloads = nDownloads;
         this.path = path;
@@ -47,7 +48,9 @@ public class Music {
     }
 
     public int getNDownloads() {
-        return nDownloads;
+        synchronized (this) {
+            return nDownloads;
+        }
     }
 
     public String getPath() {
@@ -67,6 +70,7 @@ public class Music {
     public void lock(){
         musicLock.lock();
     }
+
     public void unlock(){
         musicLock.unlock();
     }

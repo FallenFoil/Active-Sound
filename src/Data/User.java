@@ -35,19 +35,27 @@ public class User {
     }
 
     public List<Integer> getDownloads(){
-        return new ArrayList<>(downloads);
+        synchronized (this) {
+            return new ArrayList<>(downloads);
+        }
     }
 
     public List<Integer> getUploads(){
-        return new ArrayList<>(uploads);
+        synchronized (this) {
+            return new ArrayList<>(uploads);
+        }
     }
 
     public void addDownload(int id){
+        lock();
         downloads.add(id);
+        unlock();
     }
 
     public void addUpload(int id){
+        lock();
         uploads.add(id);
+        unlock();
     }
 
     public boolean authentication(String password){
@@ -59,11 +67,15 @@ public class User {
     }
 
     public void online(){
+        lock();
         online = true;
+        unlock();
     }
 
     public void offline(){
+        lock();
         online = false;
+        unlock();
     }
 
     public void lock(){

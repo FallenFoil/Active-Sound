@@ -51,7 +51,7 @@ public class ActiveSound implements Data.ActiveSound {
         if(!users.contains(username)){
             users.lock();
             users.put(username,password);
-            users.lock();
+            users.unlock();
         }
         else{
             throw new UserAlreadyRegisteredException(username);
@@ -60,7 +60,9 @@ public class ActiveSound implements Data.ActiveSound {
 
     @Override
     public void logOff(String username) {
-
+        users.lock();
+        users.get(username).offline();
+        users.unlock();
     }
 
     @Override
