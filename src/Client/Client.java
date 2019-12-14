@@ -69,6 +69,9 @@ public class Client {
     }
 
     private void mainMenu(){
+        this.lock.lock();
+        this.menu.clear();
+
         this.menu.addOption("Search", ()->{
             System.out.println("Search");
         });
@@ -89,6 +92,32 @@ public class Client {
             this.out.println("quit");
             this.out.flush();
         });
+
+        this.condition.signal();
+        this.lock.unlock();
+    }
+
+    private void searchMenu(){
+        this.menu.addOption("Next Page", ()->{
+            System.out.println("Next page");
+        });
+
+        this.menu.addOption("Previous Page", ()->{
+            System.out.println("Previous page");
+        });
+
+        this.menu.addOption("Listen", ()->{
+            System.out.println("Listen");
+        });
+
+        this.menu.addOption("Download", ()->{
+            System.out.println("Download");
+        });
+
+        this.menu.addOption("Back", ()->{
+            this.menu.clear();
+            authentication();
+        });
     }
 
     private Thread read(){
@@ -99,13 +128,9 @@ public class Client {
                     String[] args = str.split("[|]");
                     switch (args[0]){
                         case "0":
-                            if(args[1].equals("Sucess")){
+                            if(args[1].equals("Success")){
                                 System.out.println("Welcome, " + args[2]);
-                                this.lock.lock();
-                                this.menu.clear();
                                 mainMenu();
-                                this.condition.signal();
-                                this.lock.unlock();
                             }
                             else{
                                 System.out.println(args[1]);

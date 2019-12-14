@@ -30,13 +30,14 @@ public class ServerClient implements Runnable{
             String str = in.readLine();
 
             while(!str.equals("quit")){
+                System.out.println(str);
                 String[] args = str.split("[|]");
                 System.out.println(args[0] + " " + args[1] + " " + args[2]);
                 switch (args[0]){
                     case "0":
                         try {
                             this.app.login(args[1],args[2],this.so);
-                            out.println("0|Sucess|"+args[1]);
+                            out.println("0|Success|"+args[1]);
                             out.flush();
                         }
                         catch (UserAlreadyOnlineException | UserNotRegisteredException e){
@@ -49,7 +50,7 @@ public class ServerClient implements Runnable{
                     case "1":
                         try{
                             this.app.register(args[1],args[2]);
-                            out.println("1|Sucess|"+args[1]);
+                            out.println("1|Success|"+args[1]);
                             out.flush();
                         }
                         catch(UserAlreadyRegisteredException e){

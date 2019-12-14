@@ -1,26 +1,24 @@
 package Client;
 
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Menu {
-    //Defines
-    private static final int exit = 0;
-    private static final int textColor = 1;
 
     private String name;
     private int nOptions;
-    private Map<Integer, String> menuOptions;
-    private Map<Integer, Map<Integer, String>> optionSettings;
-    private Map<Integer, CallBack> callBacks;
+    private Map<String, String> allSettings; //All possible settings
+    private Map<Integer, String> menuOptions; //Options that apear in the menu
+    private Map<Integer, List<String>> optionSettings; //Settings of each option
+    private Map<Integer, CallBack> callBacks; //Callbacks of each option
 
     public Menu(){
         this.nOptions = 1;
         this.menuOptions = new HashMap<>();
         this.optionSettings = new HashMap<>();
         this.callBacks = new HashMap<>();
+        this.allSettings = new HashMap<>();
+
+        populateAllSettings();
     }
 
     public Menu(String newName){
@@ -29,71 +27,79 @@ public class Menu {
         this.menuOptions = new HashMap<>();
         this.optionSettings = new HashMap<>();
         this.callBacks = new HashMap<>();
+        this.allSettings = new HashMap<>();
+
+        populateAllSettings();
+    }
+
+    private void populateAllSettings(){
+        this.allSettings.put("reset", "\u001B[0m");
+
+        this.allSettings.put("bold", "\u001B[1m");
+        this.allSettings.put("italic", "\u001B[3m");
+        this.allSettings.put("underline", "\u001B[4m");
+        this.allSettings.put("reverse", "\u001B[7m");
+        this.allSettings.put("crossed-out", "\u001B[9m");
+        this.allSettings.put("double-underline", "\u001B[21m");
+
+        this.allSettings.put("color-white", "\u001B[30m");
+        this.allSettings.put("color-red", "\u001B[31m");
+        this.allSettings.put("color-lime", "\u001B[32m");
+        this.allSettings.put("color-gold", "\u001B[33m");
+        this.allSettings.put("color-blue", "\u001B[34m");
+        this.allSettings.put("color-eggplant", "\u001B[35m");
+        this.allSettings.put("color-persiangreen", "\u001B[36m");
+        this.allSettings.put("color-gray", "\u001B[37m");
+        this.allSettings.put("color-default", "\u001B[39m");
+
+        this.allSettings.put("background-color-white", "\u001B[40m");
+        this.allSettings.put("background-color-red", "\u001B[41m");
+        this.allSettings.put("background-color-lime", "\u001B[42m");
+        this.allSettings.put("background-color-gold", "\u001B[43m");
+        this.allSettings.put("background-color-blue", "\u001B[44m");
+        this.allSettings.put("background-color-eggplant", "\u001B[45m");
+        this.allSettings.put("background-color-persiangreen", "\u001B[46m");
+        this.allSettings.put("background-color-gray", "\u001B[47m");
+        this.allSettings.put("background-color-default", "\u001B[49m");
+
+        this.allSettings.put("framed", "\u001B[51m");
     }
 
     public void start(String newName){
         //Header
-        StringBuilder header = new StringBuilder("*");
-        for(int i=0; i<name.length()*3; i++){
-            header.append("*");
-        }
-        header.append("*\n*");
+        String asterisks = "*".repeat(Math.max(0, newName.length() * 3));
+        String spaces = " ".repeat(Math.max(0, newName.length()));
+        String header = "*" + asterisks + "*\n" +
+                "*" + spaces + newName + spaces + "*\n" +
+                "*" + asterisks + "*\n";
 
-        for(int i=0; i<name.length(); i++){
-            header.append(" ");
-        }
-        header.append(newName);
-        for(int i=0; i<name.length(); i++){
-            header.append(" ");
-        }
-        header.append("*\n");
-
-        header.append("*");
-        for(int i=0; i<name.length()*3; i++){
-            header.append("*");
-        }
-        header.append("*\n");
-
-        //Boddy
+        //Body
         StringBuilder body = new StringBuilder();
-        for(int j=1; j<=this.menuOptions.size(); j++){
-            int w = j;
-
-            if(!this.menuOptions.containsKey(w)){
-                w = 0;
-            }
-
-            int optionNumber = w;
-            String str = "";
-            if(this.optionSettings.containsKey(w)){
-                if(this.optionSettings.get(w).containsKey(this.exit)){
-                    optionNumber = 0;
+        for(int j=0; j<=this.menuOptions.size(); j++){
+            if(this.menuOptions.containsKey(j)){
+                for(String str : this.optionSettings.get(j)){
+                    if(!str.equals("exit")){
+                        body.append(str);
+                    }
                 }
-                if(this.optionSettings.get(w).containsKey(this.textColor)){
-                    str = this.optionSettings.get(w).get(this.textColor);
-                }
+                body.append("  ").append(j).append(")     ");
+                body.append(this.menuOptions.get(j)).append("\u001B[0m\n");
             }
-            body.append("  " + optionNumber + ")");
-            for(int i=0; i< 5; i++){
-                body.append(" ");
-            }
-            if(this.nOptions/10 < 1 ){
-                body.append(" ");
-            }
-
-            body.append(str + this.menuOptions.get(optionNumber) + "\u001B[0m");
-
-            body.append("\n");
         }
 
-        System.out.print(header.toString() + body.toString() + "$ ");
+        System.out.print(header + body.toString() + "$ ");
 
         //Scanner
         Scanner in = new Scanner(System.in);
-        int op = -1;
+        int op;
 
         try {
             op = in.nextInt();
+            while(!this.callBacks.containsKey(op)){
+                System.out.print("That option doesn't exists!\n$ ");
+                op = in.nextInt();
+            }
+
             this.callBacks.get(op).run();
         }
         catch (NumberFormatException | InputMismatchException e){
@@ -101,69 +107,54 @@ public class Menu {
         }
     }
 
-    public void start(){
+    void start(){
         //Header
-        StringBuilder header = new StringBuilder("*");
-        for(int i=0; i<name.length()*3; i++){
-            header.append("*");
-        }
-        header.append("*\n*");
+        String asterisks = "*".repeat(Math.max(0, this.name.length() * 3));
+        String spaces = " ".repeat(Math.max(0, this.name.length()));
 
-        for(int i=0; i<name.length(); i++){
-            header.append(" ");
-        }
-        header.append(name);
-        for(int i=0; i<name.length(); i++){
-            header.append(" ");
-        }
-        header.append("*\n");
+        String header = "*" + asterisks + "*\n" +
+                "*" + spaces + name + spaces + "*\n" +
+                "*" + asterisks + "*\n";
 
-        header.append("*");
-        for(int i=0; i<name.length()*3; i++){
-            header.append("*");
-        }
-        header.append("*\n");
-
-        //Boddy
+        //Body
         StringBuilder body = new StringBuilder();
         for(int j=1; j<=this.menuOptions.size(); j++){
-            int w = j;
-
-            if(!this.menuOptions.containsKey(w)){
-                w = 0;
-            }
-
-            int optionNumber = w;
-            String str = "";
-            if(this.optionSettings.containsKey(w)){
-                if(this.optionSettings.get(w).containsKey(this.exit)){
-                    optionNumber = 0;
+            if(this.menuOptions.containsKey(j)){
+                body.append("  ");
+                if(this.optionSettings.containsKey(j)){
+                    for(String str : this.optionSettings.get(j)){
+                        if(!str.equals("exit")){
+                            body.append(str);
+                        }
+                    }
                 }
-                if(this.optionSettings.get(w).containsKey(this.textColor)){
-                    str = this.optionSettings.get(w).get(this.textColor);
-                }
+                body.append(j).append(")     ").append(this.menuOptions.get(j)).append("\u001B[0m\n");
             }
-            body.append("  " + optionNumber + ")");
-            for(int i=0; i< 5; i++){
-                body.append(" ");
-            }
-            if(this.nOptions/10 < 1 ){
-                body.append(" ");
-            }
-
-            body.append(str + this.menuOptions.get(optionNumber) + "\u001B[0m");
-
-            body.append("\n");
         }
 
-        System.out.print(header.toString() + body.toString() + "$ ");
+        if(this.menuOptions.containsKey(0)){
+            body.append("  ");
+            for(String str : this.optionSettings.get(0)){
+                if(!str.equals("exit")){
+                    body.append(str);
+                }
+            }
+            body.append("0)     ").append(this.menuOptions.get(0)).append("\u001B[0m\n");
+        }
+
+        System.out.print(header + body.toString() + "$ ");
 
         //Scanner
         Scanner in = new Scanner(System.in);
-        int op = -1;
+        int op;
 
         try {
             op = in.nextInt();
+            while(!this.callBacks.containsKey(op)){
+                System.out.print("That option doesn't exists!\n$ ");
+                op = in.nextInt();
+            }
+
             this.callBacks.get(op).run();
         }
         catch (NumberFormatException | InputMismatchException e){
@@ -171,21 +162,26 @@ public class Menu {
         }
     }
 
-    private Map<Integer, String> parseOptions(String settings){
+    private List<String> parseOptions(String settings){
         String[] args = settings.split("[;]");
-        Map<Integer, String> list = new HashMap<>();
+        List<String> list = new ArrayList<>();
 
-        for(int i=0; i<args.length; i++){
-            String[] moreArgs = args[i].split("[=]");
-            switch (moreArgs[0].toLowerCase().replaceAll("\\s+", "")){
+        for(String arg : args) {
+            String[] moreArgs = arg.split("[=]");
+            switch (moreArgs[0].toLowerCase().replaceAll("\\s+", "")) {
                 case "exit":
-                    list.put(this.exit, "true");
+                    list.add("exit");
                     break;
                 case "color":
                     String[] rgb = moreArgs[1].replaceAll("\\s+", "").split("[,]");
-                    list.put(this.textColor, "\u001B[38;2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m");
+                    list.add("\u001B[38;2;" + rgb[0] + ";" + rgb[1] + ";" + rgb[2] + "m");
+                    break;
+                case "background-color":
+                    String[] back_rgb = moreArgs[1].replaceAll("\\s+", "").split("[,]");
+                    list.add("\u001B[48;2;" + back_rgb[0] + ";" + back_rgb[1] + ";" + back_rgb[2] + "m");
                     break;
                 default:
+                    list.add(this.allSettings.get(moreArgs[0].toLowerCase().replaceAll("\\s+", "")));
                     break;
             }
         }
@@ -193,16 +189,16 @@ public class Menu {
         return list;
     }
 
-    public void addOption(String name, CallBack callBack){
+    void addOption(String name, CallBack callBack){
         this.menuOptions.put(this.nOptions, name);
         this.callBacks.put(this.nOptions, callBack);
         this.nOptions++;
     }
 
-    public void addOption(String name, String settings, CallBack callBack){
-        Map<Integer, String> map = parseOptions(settings);
+    void addOption(String name, String settings, CallBack callBack){
+        List<String> map = parseOptions(settings);
 
-        if(map.get(0).equals("true")){
+        if(map.contains("exit")){
             this.menuOptions.put(0, name);
             this.callBacks.put(0, callBack);
             this.optionSettings.put(0, map);
@@ -216,7 +212,7 @@ public class Menu {
 
     }
 
-    public void clear(){
+    void clear(){
         this.nOptions = 1;
         this.menuOptions.clear();
         this.optionSettings.clear();
@@ -224,6 +220,6 @@ public class Menu {
     }
 
     public interface CallBack {
-        public void run();
+        void run();
     }
 }
