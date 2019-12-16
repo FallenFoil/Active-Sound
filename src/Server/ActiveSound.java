@@ -3,8 +3,8 @@ package Server;
 import Data.*;
 
 import java.io.FileNotFoundException;
-import java.net.Socket;
 import java.util.HashMap;
+
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
     private Musics musics;
@@ -23,9 +23,7 @@ public class ActiveSound implements Data.ActiveSound {
         return users.getUsers();
     }
 
-
-    public void login(String username, String password, Socket socket)
-            throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
+    public void login(String username, String password) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
 
             if(!this.users.contains(username)){
                 throw new UserNotRegisteredException(username);
@@ -57,19 +55,16 @@ public class ActiveSound implements Data.ActiveSound {
         }
     }
 
-    @Override
     public void logOff(String username) {
         users.lock();
         users.get(username).offline();
         users.unlock();
     }
 
-    @Override
     public void upload(String path) throws FileNotFoundException {
 
     }
 
-    @Override
     public void download(String path) throws FileNotFoundException {
 
     }

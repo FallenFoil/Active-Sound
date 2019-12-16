@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
 import Data.InvalidPasswordException;
 import Data.UserAlreadyOnlineException;
@@ -14,10 +15,12 @@ import Data.UserNotRegisteredException;
 public class ServerClient implements Runnable{
     private ActiveSound app;
     private Socket so;
+    private String id;
 
     public ServerClient(ActiveSound newApp, Socket so){
         this.app = newApp;
         this.so = so;
+        this.id = null;
     }
 
     public void run(){
@@ -29,43 +32,31 @@ public class ServerClient implements Runnable{
 
             String str = in.readLine();
 
-            while(!str.equals("quit")){
-                System.out.println(str);
-                String[] args = str.split("[|]");
-                System.out.println(args[0] + " " + args[1] + " " + args[2]);
-                switch (args[0]){
-                    case "0":
-                        try {
-                            this.app.login(args[1],args[2],this.so);
-                            out.println("0|Success|"+args[1]);
+            while(!str.equals("exit")){
+                String[] args = str.split(" ");
+                try {
+                    switch (args[0]) {
+                        case "login":
+                            this.app.login(args[1], args[2]);
+                            out.println("0");
                             out.flush();
-                        }
-                        catch (UserAlreadyOnlineException | UserNotRegisteredException e){
-                            out.println("0|" + e.getMessage());
+                            this.id = args[1];
+                            break;
+                        case "register":
+                            this.app.register(args[1], args[2]);
+                            out.println(0);
                             out.flush();
-                        } catch (InvalidPasswordException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case "1":
-                        try{
-                            this.app.register(args[1],args[2]);
-                            out.println("1|Success|"+args[1]);
-                            out.flush();
-                        }
-                        catch(UserAlreadyRegisteredException e){
-                            out.println("1|" + e.getMessage());
-                            out.flush();
-                        }
-                        break;
-                    default:
-                        break;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                catch (InvalidPasswordException | UserAlreadyOnlineException | UserAlreadyRegisteredException | UserNotRegisteredException e){
+                    out.println(e.getMessage());
+                    out.flush();
                 }
                 str = in.readLine();
             }
-
-            out.println("shutdown");
-            out.flush();
 
             this.so.shutdownInput();
             this.so.shutdownOutput();
@@ -74,7 +65,15 @@ public class ServerClient implements Runnable{
             System.out.println("Connection closed");
         }
         catch (IOException e) {
-            System.out.println(e.getMessage());
+            if(e instanceof SocketException){
+                System.out.println("Connection force closed");
+                if(this.id!=null){
+                    this.app.getUsers().get(this.id).offline();
+                }
+            }
+            else{
+                System.out.println(e.getMessage());
+            }
         }
     }
 }
