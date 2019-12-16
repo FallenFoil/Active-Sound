@@ -9,11 +9,35 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client{
-    private static Menu mainPage(Menu menu){
+    private static Menu searchPage(Menu menu, Scanner scan){
+        menu.clear();
+
+        menu.addOption("Next Page", ()->{
+            System.out.println("Next Page");
+        });
+
+        menu.addOption("Previous Page", ()->{
+            System.out.println("Previous Page");
+        });
+
+        menu.addOption("Download", ()->{
+            System.out.println("Downlaod");
+        });
+
+        menu.addOption("Back", ()->{
+            mainPage(menu, scan).start();
+        });
+
+        return menu;
+    }
+
+    private static Menu mainPage(Menu menu, Scanner scan){
         menu.clear();
 
         menu.addOption("Search", ()->{
-            System.out.println("Search");
+            System.out.print("Music tags (seperated by '|'):\n$ ");
+            String username = scan.nextLine();
+            searchPage(menu, scan).start();
         });
 
         menu.addOption("Download", ()->{
@@ -25,7 +49,7 @@ public class Client{
         });
 
         menu.addOption("Logoff", ()->{
-            System.out.println("Logoof");
+            System.out.println("Logoff");
         });
 
         return menu;
@@ -53,7 +77,7 @@ public class Client{
                     System.out.println(e.getMessage());
                 }
 
-                mainPage(menu).start();
+                mainPage(menu, scan).start();
             });
 
             menu.addOption("Register", ()->{
