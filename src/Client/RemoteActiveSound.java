@@ -5,6 +5,8 @@ import Data.*;
 import javax.naming.ldap.SortKey;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RemoteActiveSound implements ActiveSound {
     private Socket socket;
@@ -22,6 +24,7 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
+    //Done. Needs verification
     public void login(String username, String password) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
         this.out.println("login " + username + " " + password);
         this.out.flush();
@@ -45,6 +48,7 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
+    //Done. Needs verification
     public void register(String username, String password) throws UserAlreadyRegisteredException{
         this.out.println("register " + username + " " + password);
         this.out.flush();
@@ -61,20 +65,31 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
+    //Not Done
     public void logOff(String username){
-
+        System.out.println("Bye");
     }
 
-    public void upload(String path) throws FileNotFoundException{
-
+    //Not Done
+    public void upload(String title, String author, int year, String tags, String path) throws FileNotFoundException{
+        System.out.println("Uploading");
     }
 
-    public void download(String path) throws FileNotFoundException{
-
+    //Not Done
+    public void download(int id) throws FileNotFoundException{
+        System.out.println("Downloading");
     }
 
+    //Done. Needs verification
     public void exit(){
         this.out.println("exit");
         this.out.flush();
+    }
+
+    //Not Done
+    public List<String> search(String tags){
+        List<String> musics = new ArrayList<>();
+
+        return musics;
     }
 }

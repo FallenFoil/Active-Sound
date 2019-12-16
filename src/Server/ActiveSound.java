@@ -3,7 +3,9 @@ package Server;
 import Data.*;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
@@ -61,11 +63,17 @@ public class ActiveSound implements Data.ActiveSound {
         users.unlock();
     }
 
-    public void upload(String path) throws FileNotFoundException {
+    public void upload(String title, String author, int year, String tags, String path) throws FileNotFoundException {
 
     }
 
-    public void download(String path) throws FileNotFoundException {
+    public void download(int id) throws FileNotFoundException {
 
+    }
+
+    public List<String> search(String tags){
+        List<String> musics = new ArrayList<>();
+
+        return musics;
     }
 }
