@@ -1,22 +1,25 @@
 package Client;
 
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.InputMismatchException;
 
-public class Menu {
+public class Menu{
 
     private String name;
     private int nOptions;
     private Map<String, String> allSettings; //All possible settings
-    private Map<Integer, String> menuOptions; //Options that apear in the menu
-    private Map<Integer, List<String>> optionSettings; //Settings of each option
-    private Map<Integer, CallBack> callBacks; //Callbacks of each option
+    private Map<Integer, Trio> options;
+    private List<String> data;
 
     public Menu(){
         this.nOptions = 1;
-        this.menuOptions = new HashMap<>();
-        this.optionSettings = new HashMap<>();
-        this.callBacks = new HashMap<>();
         this.allSettings = new HashMap<>();
+        this.options = new HashMap<>();
+        this.data = new ArrayList<>();
 
         populateAllSettings();
     }
@@ -24,10 +27,9 @@ public class Menu {
     public Menu(String newName){
         this.name = newName;
         this.nOptions = 1;
-        this.menuOptions = new HashMap<>();
-        this.optionSettings = new HashMap<>();
-        this.callBacks = new HashMap<>();
+        this.options = new HashMap<>();
         this.allSettings = new HashMap<>();
+        this.data = new ArrayList<>();
 
         populateAllSettings();
     }
@@ -75,16 +77,34 @@ public class Menu {
 
         //Body
         StringBuilder body = new StringBuilder();
-        for(int j=0; j<=this.menuOptions.size(); j++){
-            if(this.menuOptions.containsKey(j)){
-                for(String str : this.optionSettings.get(j)){
-                    if(!str.equals("exit")){
-                        body.append(str);
+        for(String str : this.data){
+            body.append(str).append("\n");
+        }
+
+        for(int j=1; j<=this.options.size(); j++){
+            if(this.options.containsKey(j)){
+                Trio trio = this.options.get(j);
+                body.append("  ");
+                if(trio.getSettings() != null){
+                    for(String str : trio.getSettings()){
+                        if(!str.equals("exit")){
+                            body.append(str);
+                        }
                     }
                 }
-                body.append("  ").append(j).append(")     ");
-                body.append(this.menuOptions.get(j)).append("\u001B[0m\n");
+                body.append(j).append(")     ").append(trio.getName()).append("\u001B[0m\n");
             }
+        }
+
+        if(this.options.containsKey(0)){
+            Trio trio = this.options.get(0);
+            body.append("  ");
+            for(String str : trio.getSettings()){
+                if(!str.equals("exit")){
+                    body.append(str);
+                }
+            }
+            body.append("0)     ").append(trio.getName()).append("\u001B[0m\n");
         }
 
         System.out.print(header + body.toString() + "$ ");
@@ -95,19 +115,19 @@ public class Menu {
 
         try {
             op = in.nextInt();
-            while(!this.callBacks.containsKey(op)){
+            while(!this.options.containsKey(op)){
                 System.out.print("That option doesn't exists!\n$ ");
                 op = in.nextInt();
             }
 
-            this.callBacks.get(op).run();
+            this.options.get(op).getCallback().run();
         }
         catch (NumberFormatException | InputMismatchException e){
             System.out.println("Input Inválido");
         }
     }
 
-    void start(){
+    public void start(){
         //Header
         String asterisks = "*".repeat(Math.max(0, this.name.length() * 3));
         String spaces = " ".repeat(Math.max(0, this.name.length()));
@@ -118,28 +138,34 @@ public class Menu {
 
         //Body
         StringBuilder body = new StringBuilder();
-        for(int j=1; j<=this.menuOptions.size(); j++){
-            if(this.menuOptions.containsKey(j)){
+        for(String str : this.data){
+            body.append(str).append("\n");
+        }
+
+        for(int j=1; j<=this.options.size(); j++){
+            if(this.options.containsKey(j)){
+                Trio trio = this.options.get(j);
                 body.append("  ");
-                if(this.optionSettings.containsKey(j)){
-                    for(String str : this.optionSettings.get(j)){
+                if(trio.getSettings() != null){
+                    for(String str : trio.getSettings()){
                         if(!str.equals("exit")){
                             body.append(str);
                         }
                     }
                 }
-                body.append(j).append(")     ").append(this.menuOptions.get(j)).append("\u001B[0m\n");
+                body.append(j).append(")     ").append(trio.getName()).append("\u001B[0m\n");
             }
         }
 
-        if(this.menuOptions.containsKey(0)){
+        if(this.options.containsKey(0)){
+            Trio trio = this.options.get(0);
             body.append("  ");
-            for(String str : this.optionSettings.get(0)){
+            for(String str : trio.getSettings()){
                 if(!str.equals("exit")){
                     body.append(str);
                 }
             }
-            body.append("0)     ").append(this.menuOptions.get(0)).append("\u001B[0m\n");
+            body.append("0)     ").append(trio.getName()).append("\u001B[0m\n");
         }
 
         System.out.print(header + body.toString() + "$ ");
@@ -150,12 +176,12 @@ public class Menu {
 
         try {
             op = in.nextInt();
-            while(!this.callBacks.containsKey(op)){
+            while(!this.options.containsKey(op)){
                 System.out.print("That option doesn't exists!\n$ ");
                 op = in.nextInt();
             }
 
-            this.callBacks.get(op).run();
+            this.options.get(op).getCallback().run();
         }
         catch (NumberFormatException | InputMismatchException e){
             System.out.println("Input Inválido");
@@ -189,37 +215,62 @@ public class Menu {
         return list;
     }
 
-    void addOption(String name, CallBack callBack){
-        this.menuOptions.put(this.nOptions, name);
-        this.callBacks.put(this.nOptions, callBack);
+    public void addOption(String name, CallBack callBack){
+        Trio trio = new Trio(name, null, callBack);
+        this.options.put(this.nOptions, trio);
         this.nOptions++;
     }
 
-    void addOption(String name, String settings, CallBack callBack){
+    public void addOption(String name, String settings, CallBack callBack){
         List<String> map = parseOptions(settings);
+        Trio trio;
 
         if(map.contains("exit")){
-            this.menuOptions.put(0, name);
-            this.callBacks.put(0, callBack);
-            this.optionSettings.put(0, map);
+            trio = new Trio(name, map, callBack);
+            this.options.put(0, trio);
         }
         else{
-            this.menuOptions.put(this.nOptions, name);
-            this.callBacks.put(this.nOptions, callBack);
-            this.optionSettings.put(this.nOptions, map);
+            trio = new Trio(name, map, callBack);
+            this.options.put(this.nOptions, trio);
             this.nOptions++;
         }
-
     }
 
-    void clear(){
+    public void addData(String newData){
+        this.data.add(newData);
+    }
+
+    public void clear(){
         this.nOptions = 1;
-        this.menuOptions.clear();
-        this.optionSettings.clear();
-        this.callBacks.clear();
+        this.options.clear();
     }
 
     public interface CallBack {
         void run();
     }
+
+    static class Trio{
+        private final String name;
+        private final List<String> settings;
+        private final CallBack callback;
+
+        Trio(String newName, List<String> newSettings, CallBack newCallbacks){
+            this.name = newName;
+            this.settings = newSettings;
+            this.callback = newCallbacks;
+        }
+
+        String getName(){
+            return this.name;
+        }
+
+        List<String> getSettings(){
+            return this.settings;
+        }
+
+        CallBack getCallback(){
+            return this.callback;
+        }
+    }
 }
+
