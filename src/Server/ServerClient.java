@@ -1,16 +1,10 @@
 package Server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
-import Data.InvalidPasswordException;
-import Data.UserAlreadyOnlineException;
-import Data.UserAlreadyRegisteredException;
-import Data.UserNotRegisteredException;
+import Data.*;
 
 public class ServerClient implements Runnable{
     private ActiveSound app;
@@ -47,6 +41,9 @@ public class ServerClient implements Runnable{
                             out.println(0);
                             out.flush();
                             break;
+                        case "download":
+                            Music toDownload = this.app.getMusics().get(Integer.parseInt(args[1]));
+                            new Thread(new DownloadThread(toDownload,so));
                         default:
                             break;
                     }

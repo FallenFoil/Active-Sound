@@ -30,6 +30,9 @@ public class Musics {
         }
     }
 
+    public boolean contains(int id){
+        return (musics.containsKey(id));
+    }
 
     public void lock(){
         musicsLock.lock();
