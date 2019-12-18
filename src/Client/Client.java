@@ -18,6 +18,7 @@ public class Client{
 
         menu.addOption("Download", ()->{
             System.out.println("Download");
+
         });
 
         menu.addOption("Upload", ()->{
@@ -46,7 +47,7 @@ public class Client{
                 String password = scan.nextLine();
 
                 try{
-                    activeSound.login(username, password);
+                    activeSound.login(username, password,s);
                     System.out.println("Welcome, " + username);
                 }
                 catch(InvalidPasswordException | UserAlreadyOnlineException | UserNotRegisteredException e){

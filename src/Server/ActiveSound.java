@@ -3,15 +3,18 @@ package Server;
 import Data.*;
 
 import java.io.FileNotFoundException;
+import java.net.Socket;
 import java.util.HashMap;
 
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
     private Musics musics;
+    private HashMap<String, Socket> sessions;
 
     public ActiveSound(){
         this.users = new Users();
         this.musics = new Musics();
+        this.sessions = new HashMap<>();
         this.users.put("admin", "admin");
     }
 
@@ -23,21 +26,24 @@ public class ActiveSound implements Data.ActiveSound {
         return users.getUsers();
     }
 
-    public void login(String username, String password) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
+    public HashMap<String, Socket> getSessions(){
+        return new HashMap<>(this.sessions);
+    }
+
+    public void login(String username, String password,Socket s) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
 
             if(!this.users.contains(username)){
                 throw new UserNotRegisteredException(username);
             }
 
-            if(this.users.get(username).isOnline()){
+            if(this.sessions.containsKey(username)){
                 throw new UserAlreadyOnlineException(username);
             }
 
             if(this.users.get(username).authentication(password)){
-
                 users.lock();
                 users.put(username,password);
-                users.get(username).online();
+                sessions.put(username,s);
                 users.unlock();
             }
             else throw new InvalidPasswordException();
@@ -56,16 +62,26 @@ public class ActiveSound implements Data.ActiveSound {
     }
 
     public void logOff(String username) {
-        users.lock();
-        users.get(username).offline();
-        users.unlock();
+        sessions.remove(username);
     }
 
     public void upload(String path) throws FileNotFoundException {
 
     }
 
-    public void download(String path) throws FileNotFoundException {
+    public void download(int id, String username) throws MusicNotFoundException {
+        if(!musics.contains(id)){
+                throw new MusicNotFoundException(Integer.toString(id));
+        }
+        try {
+            Music toDownload = musics.get(id);
+            Socket s = sessions.get(username);
+            Thread download = new Thread(new DownloadThread(toDownload, s));
+            download.start();
+            download.join();
+        }catch (Exception e){
+
+        }
 
     }
 }

@@ -22,7 +22,7 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
-    public void login(String username, String password) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
+    public void login(String username, String password,Socket socket) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
         this.out.println("login " + username + " " + password);
         this.out.flush();
 
@@ -69,10 +69,25 @@ public class RemoteActiveSound implements ActiveSound {
 
     }
 
-    public void download(String path) throws FileNotFoundException{
+    public void download(int id, String username) throws MusicNotFoundException {
 
+        this.out.println("download " + id);
+
+        try {
+            InputStream fin = socket.getInputStream();
+            OutputStream fout = new FileOutputStream("username" + id);
+
+            byte[] bytes = new byte[16 * 1024];
+            int count;
+            while ((count = fin.read(bytes)) > 0) {
+                fout.write(bytes, 0, count);
+            }
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
     public void exit(){
         this.out.println("exit");
         this.out.flush();

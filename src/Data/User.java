@@ -10,7 +10,6 @@ public class User {
     private String password;
     private List<Integer> downloads;
     private List<Integer> uploads;
-    private boolean online;
     public ReentrantLock userLock;
 
     public User(String name, String password){
@@ -18,7 +17,6 @@ public class User {
         this.password = password;
         this.downloads = new ArrayList<>();
         this.uploads = new ArrayList<>();
-        this.online = false;
         userLock = new ReentrantLock();
     }
 
@@ -27,7 +25,6 @@ public class User {
         this.password = password;
         this.downloads = new ArrayList<>(downloads);
         this.uploads = new ArrayList<>(uploads);
-        this.online = false;
     }
 
     public String getName(){
@@ -62,21 +59,6 @@ public class User {
         return password.equals(this.password);
     }
 
-    public boolean isOnline(){
-        return online;
-    }
-
-    public void online(){
-        lock();
-        online = true;
-        unlock();
-    }
-
-    public void offline(){
-        lock();
-        online = false;
-        unlock();
-    }
 
     public void lock(){
         userLock.lock();

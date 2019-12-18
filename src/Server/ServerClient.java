@@ -31,7 +31,7 @@ public class ServerClient implements Runnable{
                 try {
                     switch (args[0]) {
                         case "login":
-                            this.app.login(args[1], args[2]);
+                            this.app.login(args[1], args[2],so);
                             out.println("0");
                             out.flush();
                             this.id = args[1];
@@ -42,13 +42,12 @@ public class ServerClient implements Runnable{
                             out.flush();
                             break;
                         case "download":
-                            Music toDownload = this.app.getMusics().get(Integer.parseInt(args[1]));
-                            new Thread(new DownloadThread(toDownload,so));
+                            this.app.download(Integer.parseInt(args[1]),this.id);
                         default:
                             break;
                     }
                 }
-                catch (InvalidPasswordException | UserAlreadyOnlineException | UserAlreadyRegisteredException | UserNotRegisteredException e){
+                catch (InvalidPasswordException | UserAlreadyOnlineException | UserAlreadyRegisteredException | UserNotRegisteredException | MusicNotFoundException e){
                     out.println(e.getMessage());
                     out.flush();
                 }
@@ -65,7 +64,7 @@ public class ServerClient implements Runnable{
             if(e instanceof SocketException){
                 System.out.println("Connection force closed");
                 if(this.id!=null){
-                    this.app.getUsers().get(this.id).offline();
+                    this.app.getSessions().remove(this.id);
                 }
             }
             else{
