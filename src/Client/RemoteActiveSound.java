@@ -2,9 +2,10 @@ package Client;
 
 import Data.*;
 
-import javax.naming.ldap.SortKey;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RemoteActiveSound implements ActiveSound {
     private Socket socket;
@@ -14,15 +15,16 @@ public class RemoteActiveSound implements ActiveSound {
     public RemoteActiveSound(Socket newSocket){
         this.socket = newSocket;
         try{
-            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            this.out = new PrintWriter(this.socket.getOutputStream());
+            this.in = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
+            this.out = new PrintWriter(newSocket.getOutputStream());
         }
         catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void login(String username, String password,Socket socket) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
+    //Done. Needs verification
+    public void login(String username, String password, Socket socket) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
         this.out.println("login " + username + " " + password);
         this.out.flush();
 
@@ -45,6 +47,7 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
+    //Done. Needs verification
     public void register(String username, String password) throws UserAlreadyRegisteredException{
         this.out.println("register " + username + " " + password);
         this.out.flush();
@@ -61,16 +64,18 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
+    //Not Done
     public void logOff(String username){
 
     }
 
-    public void upload(String path) throws FileNotFoundException{
-
+    //Not Done
+    public void upload(String title, String author, int year, String tags, String path) throws FileNotFoundException{
+        System.out.println("Uploading");
     }
 
+    //Not Done
     public void download(int id, String username) throws MusicNotFoundException {
-
         this.out.println("download " + id);
 
         try {
@@ -88,8 +93,17 @@ public class RemoteActiveSound implements ActiveSound {
             e.printStackTrace();
         }
     }
+
+    //Done. Needs verification
     public void exit(){
         this.out.println("exit");
         this.out.flush();
+    }
+
+    //Not Done
+    public List<String> search(String tags){
+        List<String> musics = new ArrayList<>();
+
+        return musics;
     }
 }

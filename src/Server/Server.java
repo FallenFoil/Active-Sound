@@ -9,7 +9,6 @@ public class Server {
             ServerSocket s = new ServerSocket(25567);
             ActiveSound app = new ActiveSound();
 
-
             while(true){
                 new Thread(new ServerClient(app, s.accept())).start();
             }
