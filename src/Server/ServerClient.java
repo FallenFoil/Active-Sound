@@ -38,11 +38,20 @@ public class ServerClient implements Runnable{
                             break;
                         case "register":
                             this.app.register(args[1], args[2]);
-                            out.println(0);
+                            out.println("0");
                             out.flush();
                             break;
                         case "download":
                             this.app.download(Integer.parseInt(args[1]),this.id);
+                        case "search":
+                            StringBuilder sb = new StringBuilder();
+                            for(String music : this.app.search(args[1])){
+                                sb.append(music).append("|");
+                            }
+                            if(sb.length()>0){sb.deleteCharAt(sb.length()-1).append(";");}
+                            out.println(sb.toString());
+                            out.flush();
+                            break;
                         default:
                             break;
                     }

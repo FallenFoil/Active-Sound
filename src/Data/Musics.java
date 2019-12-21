@@ -13,8 +13,9 @@ public class Musics {
         musicsLock = new ReentrantLock();
         newId = 0;
     }
+
     public HashMap<Integer, Music> getMusics() {
-        synchronized (this) {
+        synchronized(this) {
             return new HashMap<>(musics);
         }
     }
@@ -24,6 +25,7 @@ public class Musics {
         musics.put(newId++,music);
         unlock();
     }
+
     public Music get(int id){
         synchronized (this) {
             return musics.get(id);
@@ -37,6 +39,7 @@ public class Musics {
     public void lock(){
         musicsLock.lock();
     }
+
     public void unlock(){
         musicsLock.unlock();
     }

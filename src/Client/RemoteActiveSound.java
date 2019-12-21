@@ -5,6 +5,7 @@ import Data.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RemoteActiveSound implements ActiveSound {
@@ -100,9 +101,22 @@ public class RemoteActiveSound implements ActiveSound {
         this.out.flush();
     }
 
-    //Not Done
-    public List<String> search(String tags){
+    //Done. Needs verification
+    public List<String> search(String tag){
+        this.out.println("search " + tag.toLowerCase().replaceAll("\\s+", ""));
+        this.out.flush();
         List<String> musics = new ArrayList<>();
+        try{
+            String str = in.readLine();
+            if(!str.isEmpty()){
+                String[] args = str.split("[|]");
+                musics.addAll(Arrays.asList(args));
+            }
+
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
 
         return musics;
     }

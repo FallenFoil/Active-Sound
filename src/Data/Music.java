@@ -57,6 +57,14 @@ public class Music {
         return path;
     }
 
+    public boolean hasTag(String tag){
+        if(this.tags.contains(tag)){
+            return true;
+        }
+
+        return false;
+    }
+
     public int size() {
         return size;
     }
@@ -75,4 +83,21 @@ public class Music {
         musicLock.unlock();
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(this.id).append(";");
+        sb.append(this.title).append(";");
+        sb.append(this.author).append(";");
+        sb.append(this.year).append(";");
+
+        for(String str : this.tags){
+            sb.append(str).append(",");
+        }
+
+        sb.deleteCharAt(sb.length()-1).append(";");
+        sb.append(this.nDownloads);
+
+        return sb.toString();
+    }
 }

@@ -5,21 +5,29 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.InputMismatchException;
 
 public class Menu{
-
     private String name;
     private int nOptions;
     private Map<String, String> allSettings; //All possible settings
     private Map<Integer, Trio> options;
     private List<String> data;
+    private List<List<String>> table; // The List<String> is a line
+    private List<Integer> biggestsData;
+    private List<String> header;
+    private int min, max, step;
 
     public Menu(){
         this.nOptions = 1;
         this.allSettings = new HashMap<>();
         this.options = new HashMap<>();
         this.data = new ArrayList<>();
+        this.header = new ArrayList<>();
+        this.table = new ArrayList<>();
+        this.biggestsData = new ArrayList<>();
+        this.min = 0;
+        this.max = 4;
+        this.step = 4;
 
         populateAllSettings();
     }
@@ -30,6 +38,12 @@ public class Menu{
         this.options = new HashMap<>();
         this.allSettings = new HashMap<>();
         this.data = new ArrayList<>();
+        this.header = new ArrayList<>();
+        this.table = new ArrayList<>();
+        this.biggestsData = new ArrayList<>();
+        this.min = 0;
+        this.max = 4;
+        this.step = 4;
 
         populateAllSettings();
     }
@@ -67,6 +81,76 @@ public class Menu{
         this.allSettings.put("framed", "\u001B[51m");
     }
 
+    public void setStep(int newStep){
+        this.step = newStep;
+    }
+
+    public void setMin(int newMin){
+        this.min = newMin;
+    }
+
+    public void setMax(int newMax){
+        this.max = newMax;
+    }
+
+    public int getStep(){
+        return this.step;
+    }
+
+    public int getMin(){
+        return this.min;
+    }
+
+    public int getMax(){
+        return this.max;
+    }
+
+    void increaseMinMax(){
+        this.min += step;
+        this.max += step;
+    }
+
+    void decreaseMinMax(){
+        if(this.min - step >= 0){
+            this.min -= step;
+        }
+        if(this.max - step >= step){
+            this.max -= step;
+        }
+    }
+
+    private int biggestsDataSum(){
+        int res = 0;
+
+        for(Integer x : this.biggestsData){
+            res += x;
+        }
+
+        return res;
+    }
+
+    private void updateTableDataSpaces(){
+        if(!this.header.isEmpty()){
+            int column=0;
+            for(String str : this.header){
+                if(str.length() < this.biggestsData.get(column)) {
+                    this.header.set(column, str + " ".repeat(this.biggestsData.get(column) - str.length()));
+                }
+                column++;
+            }
+        }
+
+        for(List<String> line : this.table){
+            int column=0;
+            for(String str : line){
+                if(str.length() < this.biggestsData.get(column)){
+                    line.set(column, str + " ".repeat(this.biggestsData.get(column)-str.length()));
+                }
+                column++;
+            }
+        }
+    }
+
     public void start(String newName){
         //Header
         String asterisks = "*".repeat(Math.max(0, newName.length() * 3));
@@ -77,10 +161,40 @@ public class Menu{
 
         //Body
         StringBuilder body = new StringBuilder();
-        for(String str : this.data){
-            body.append(str).append("\n");
+
+        updateTableDataSpaces();
+
+        //Table
+        if(!this.header.isEmpty() || !this.table.isEmpty()){
+            int lineLength = 1 + (this.biggestsData.size() * 3) + biggestsDataSum();
+            String lineSeparator = "|" + "-".repeat(lineLength - 2) + "|\n";
+            body.append(lineSeparator);
+
+            if(!this.header.isEmpty()){
+                body.append("|");
+                for(String str : this.header){
+                    body.append(" ").append(str).append(" |");
+                }
+                body.append("\n").append(lineSeparator);
+            }
+
+            if(!this.table.isEmpty()){
+                for(int i=this.min; i<this.table.size() && i>=this.min && i<this.max; i++){
+                    body.append("|");
+                    for(String str : this.table.get(i)){
+                        body.append(" ").append(str).append(" |");
+                    }
+                    body.append("\n").append(lineSeparator);
+                }
+            }
+        }
+        else{
+            for(int i=this.min; i<this.data.size() && i<this.max; i++){
+                body.append(this.data.get(i)).append("\n");
+            }
         }
 
+        //Options
         for(int j=1; j<=this.options.size(); j++){
             if(this.options.containsKey(j)){
                 Trio trio = this.options.get(j);
@@ -96,6 +210,7 @@ public class Menu{
             }
         }
 
+        //Option exit, if exists
         if(this.options.containsKey(0)){
             Trio trio = this.options.get(0);
             body.append("  ");
@@ -107,23 +222,25 @@ public class Menu{
             body.append("0)     ").append(trio.getName()).append("\u001B[0m\n");
         }
 
-        System.out.print(header + body.toString() + "$ ");
+        System.out.print(header + body.toString());
 
         //Scanner
         Scanner in = new Scanner(System.in);
-        int op;
+        int op=-1;
 
-        try {
-            op = in.nextInt();
-            while(!this.options.containsKey(op)){
-                System.out.print("That option doesn't exists!\n$ ");
-                op = in.nextInt();
+        while(op==-1){
+            System.out.print("$ ");
+            try{
+
+                String value = in.nextLine();
+                op = Integer.parseInt(value);
+
+                if(!this.options.containsKey(op)){throw new NumberFormatException();}
+                this.options.get(op).getCallback().run();
             }
-
-            this.options.get(op).getCallback().run();
-        }
-        catch (NumberFormatException | InputMismatchException e){
-            System.out.println("Input Inválido");
+            catch(NumberFormatException e){
+                System.out.println("Invalid Input");
+            }
         }
     }
 
@@ -138,10 +255,40 @@ public class Menu{
 
         //Body
         StringBuilder body = new StringBuilder();
-        for(String str : this.data){
-            body.append(str).append("\n");
+
+        updateTableDataSpaces();
+
+        //Table
+        if(!this.header.isEmpty() || !this.table.isEmpty()){
+            int lineLength = 1 + (this.biggestsData.size() * 3) + biggestsDataSum();
+            String lineSeparator = "|" + "-".repeat(lineLength - 2) + "|\n";
+            body.append(lineSeparator);
+
+            if(!this.header.isEmpty()){
+                body.append("|");
+                for(String str : this.header){
+                    body.append(" ").append(str).append(" |");
+                }
+                body.append("\n").append(lineSeparator);
+            }
+
+            if(!this.table.isEmpty()){
+                for(int i=this.min; i<this.table.size() && i>=this.min && i<this.max; i++){
+                    body.append("|");
+                    for(String str : this.table.get(i)){
+                        body.append(" ").append(str).append(" |");
+                    }
+                    body.append("\n").append(lineSeparator);
+                }
+            }
+        }
+        else{
+            for(int i=this.min; i<this.data.size() && i<this.max; i++){
+                body.append(this.data.get(i)).append("\n");
+            }
         }
 
+        //Options
         for(int j=1; j<=this.options.size(); j++){
             if(this.options.containsKey(j)){
                 Trio trio = this.options.get(j);
@@ -157,6 +304,7 @@ public class Menu{
             }
         }
 
+        //Option exit, if exists
         if(this.options.containsKey(0)){
             Trio trio = this.options.get(0);
             body.append("  ");
@@ -168,23 +316,25 @@ public class Menu{
             body.append("0)     ").append(trio.getName()).append("\u001B[0m\n");
         }
 
-        System.out.print(header + body.toString() + "$ ");
+        System.out.print(header + body.toString());
 
         //Scanner
         Scanner in = new Scanner(System.in);
-        int op;
+        int op=-1;
 
-        try {
-            op = in.nextInt();
-            while(!this.options.containsKey(op)){
-                System.out.print("That option doesn't exists!\n$ ");
-                op = in.nextInt();
+        while(op==-1){
+            System.out.print("$ ");
+            try{
+
+                String value = in.nextLine();
+                op = Integer.parseInt(value);
+
+                if(!this.options.containsKey(op)){throw new NumberFormatException();}
+                this.options.get(op).getCallback().run();
             }
-
-            this.options.get(op).getCallback().run();
-        }
-        catch (NumberFormatException | InputMismatchException e){
-            System.out.println("Input Inválido");
+            catch(NumberFormatException e){
+                System.out.println("Invalid Input");
+            }
         }
     }
 
@@ -240,9 +390,56 @@ public class Menu{
         this.data.add(newData);
     }
 
+    void addTableData(List<String> newData){
+        if(this.biggestsData.isEmpty()){
+            for(int i=0; i<newData.size(); i++){
+                this.biggestsData.add(0);
+            }
+        }
+
+        int i=0;
+        List<String> list = new ArrayList<>();
+
+        for(String str : newData){
+            if(str.length() > this.biggestsData.get(i)){
+                this.biggestsData.set(i, str.length());
+            }
+
+            list.add(str);
+            i++;
+        }
+
+        this.table.add(list);
+    }
+
+    void addTableHeader(List<String> newHeader){
+        if(this.biggestsData.isEmpty()){
+            for(int i=0; i<newHeader.size(); i++){
+                this.biggestsData.add(0);
+            }
+        }
+
+        int i = 0;
+        for(String str : newHeader){
+            if(str.length() > this.biggestsData.get(i)){
+                this.biggestsData.set(i, str.length());
+            }
+
+            this.header.add(str);
+            i++;
+        }
+    }
+
     public void clear(){
         this.nOptions = 1;
         this.options.clear();
+        this.data.clear();
+        this.header.clear();
+        this.table.clear();
+        this.biggestsData.clear();
+        this.min = 0;
+        this.max = 4;
+        this.step = 4;
     }
 
     public interface CallBack {
@@ -273,4 +470,3 @@ public class Menu{
         }
     }
 }
-

@@ -4,8 +4,10 @@ import Data.*;
 
 import java.io.FileNotFoundException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class Client{
     private RemoteActiveSound activeSound;
@@ -38,19 +40,35 @@ public class Client{
 
     private void searchPage(List<String> musics){
         Scanner scan = new Scanner(System.in);
-        menu.clear();
+        this.menu.clear();
 
-        menu.addOption("Next Page", ()->{
-            System.out.println("Next Page");
+        List<String> header = new ArrayList<>();
+        header.add("Id");
+        header.add("Title");
+        header.add("Author");
+        header.add("Year");
+        header.add("Tags");
+        header.add("N. Downloads");
+        this.menu.addTableHeader(header);
+
+        if(!musics.isEmpty()){
+            for(String str : musics){
+                List<String> music = Arrays.asList(str.split("[;]"));
+                this.menu.addTableData(music);
+            }
+        }
+
+        this.menu.addOption("Next Page", ()->{
+            this.menu.increaseMinMax();
             this.menu.start();
         });
 
-        menu.addOption("Previous Page", ()->{
-            System.out.println("Previous Page");
+        this.menu.addOption("Previous Page", ()->{
+            this.menu.decreaseMinMax();
             this.menu.start();
         });
 
-        menu.addOption("Download", ()->{
+        this.menu.addOption("Download", ()->{
             int id = validIntegerInput("Music's id:\n$ ", scan, -2);
 
             try {
@@ -63,7 +81,7 @@ public class Client{
             this.menu.start();
         });
 
-        menu.addOption("Back", this::mainPage);
+        this.menu.addOption("Back", this::mainPage);
 
         this.menu.start();
     }
@@ -73,9 +91,9 @@ public class Client{
         this.menu.clear();
 
         this.menu.addOption("Search", ()->{
-            System.out.print("Music tags (separated by '|'):\n$ ");
-            String tags = scan.nextLine();
-            searchPage(this.activeSound.search(tags));
+            System.out.print("Music tag:\n$ ");
+            String tag = scan.nextLine();
+            searchPage(this.activeSound.search(tag));
         });
 
         this.menu.addOption("Download", ()->{
@@ -176,7 +194,8 @@ public class Client{
             client.authenticationPage();
         }
         catch(Exception e){
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }
