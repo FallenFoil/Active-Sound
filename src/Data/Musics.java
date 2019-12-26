@@ -1,16 +1,21 @@
 package Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Musics {
     private HashMap<Integer, Music> musics;
     private ReentrantLock musicsLock;
+    private HashMap<String, List<Integer>> tags;
     int newId;
 
     public Musics(){
         musics = new HashMap<>();
         musicsLock = new ReentrantLock();
+        tags = new HashMap<>();
+        tags = new HashMap<>();
         newId = 0;
     }
 
@@ -20,9 +25,24 @@ public class Musics {
         }
     }
 
+    public HashMap<String,List<Integer>> getTags(){
+        synchronized (this){
+            return new HashMap<>(tags);
+        }
+    }
     public void add(Music music){
+        List<String> newTags = music.getTags();
         lock();
-        musics.put(newId++,music);
+        for(String tag : newTags){
+            if(tags.containsKey(tag)){
+                tags.get(tag).add(music.getId());
+            }else{
+                ArrayList<Integer> newMusicTag = new ArrayList<>();
+                newMusicTag.add(music.getId());
+                tags.put(tag,newMusicTag);
+            }
+        }
+        musics.put(music.getId(),music);
         unlock();
     }
 
@@ -34,6 +54,12 @@ public class Musics {
 
     public boolean contains(int id){
         return (musics.containsKey(id));
+    }
+
+    public int getNewId() {
+        synchronized (this){
+        return newId++;
+        }
     }
 
     public void lock(){

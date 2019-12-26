@@ -81,7 +81,7 @@ public class RemoteActiveSound implements ActiveSound {
 
         try {
             InputStream fin = socket.getInputStream();
-            OutputStream fout = new FileOutputStream("username" + id);
+            OutputStream fout = new FileOutputStream(username + id);
 
             byte[] bytes = new byte[16 * 1024];
             int count;

@@ -28,74 +28,74 @@ public class ActiveSound implements Data.ActiveSound {
 
 //Music 1
         tags.add("rock");
-        music = new Music(0, "Uprising", "Muse", 2009, tags, 10475, "String path", 10);
+        music = new Music(musics.getNewId(), "Uprising", "Muse", 2009, tags, 10475, "String path", 10);
         this.musics.add(music);
 
 //Music 2
         tags.clear();
         tags.add("electro");
-        music = new Music(1, "Secret Agent", "Odd Chap", 2017, tags, 10, "String path", 10);
+        music = new Music(musics.getNewId(), "Secret Agent", "Odd Chap", 2017, tags, 10, "String path", 10);
         this.musics.add(music);
 
 //Music 3
         tags.clear();
         tags.add("electro");
-        music = new Music(2, "Sandstorm", "Darude", 2000, tags, 104, "String path", 10);
+        music = new Music(musics.getNewId(), "Sandstorm", "Darude", 2000, tags, 104, "String path", 10);
         this.musics.add(music);
 
 //Music 4
         tags.clear();
         tags.add("rock");
-        music = new Music(3, "Seven Nation Army", "White Stripes", 2003, tags, 1047, "String path", 10);
+        music = new Music(musics.getNewId(), "Seven Nation Army", "White Stripes", 2003, tags, 1047, "String path", 10);
         this.musics.add(music);
 
 //Music 5
         tags.clear();
         tags.add("jazz");
-        music = new Music(4, "Name4", "Author4", 2004, tags, 14, "String path", 10);
+        music = new Music(musics.getNewId(), "Name4", "Author4", 2004, tags, 14, "String path", 10);
         this.musics.add(music);
 
 //Music 6
         tags.clear();
         tags.add("jazz");
-        music = new Music(5, "Name5", "Author5", 2005, tags, 15, "String path", 10);
+        music = new Music(musics.getNewId(), "Name5", "Author5", 2005, tags, 15, "String path", 10);
         this.musics.add(music);
 
 //Music 7
         tags.clear();
         tags.add("rock");
-        music = new Music(6, "Name6", "Author6", 2006, tags, 16, "String path", 10);
+        music = new Music(musics.getNewId(), "Name6", "Author6", 2006, tags, 16, "String path", 10);
         this.musics.add(music);
 
 //Music 8
         tags.clear();
         tags.add("pop");
-        music = new Music(7, "Name7", "Author7", 2007, tags, 17, "String path", 10);
+        music = new Music(musics.getNewId(), "Name7", "Author7", 2007, tags, 17, "String path", 10);
         this.musics.add(music);
 
 //Music 9
         tags.clear();
         tags.add("edm");
-        music = new Music(8, "Name8", "Author8", 2008, tags, 18, "String path", 10);
+        music = new Music(musics.getNewId(), "Name8", "Author8", 2008, tags, 18, "String path", 10);
         this.musics.add(music);
 
 //Music 10
         tags.clear();
         tags.add("jazz");
-        music = new Music(9, "Name9", "Author9", 2009, tags, 19, "String path", 10);
+        music = new Music(musics.getNewId(), "Name9", "Author9", 2009, tags, 19, "String path", 10);
         this.musics.add(music);
 
 //Music 11
         tags.clear();
         tags.add("rock");
-        music = new Music(10, "Name10", "Author10", 2010, tags, 110, "String path", 10);
+        music = new Music(musics.getNewId(), "Name10", "Author10", 2010, tags, 110, "String path", 10);
         this.musics.add(music);
 
 //Music 12
         tags.clear();
         tags.add("rock");
         tags.add("jazz");
-        music = new Music(11, "Name11", "Author11", 2011, tags, 111, "String path", 10);
+        music = new Music(musics.getNewId(), "Name11", "Author11", 2011, tags, 111, "String path", 10);
         this.musics.add(music);
     }
 
@@ -160,6 +160,7 @@ public class ActiveSound implements Data.ActiveSound {
             Thread download = new Thread(new DownloadThread(toDownload, s));
             download.start();
             download.join();
+            toDownload.downloadIncrement();
         }catch (Exception e){
 
         }
@@ -167,16 +168,11 @@ public class ActiveSound implements Data.ActiveSound {
     }
 
     public List<String> search(String tag){
-        List<String> musics = new ArrayList<>();
-
-        Collection<Music> allMusics = this.musics.getMusics().values();
-
-        for(Music m : allMusics){
-            if(m.hasTag(tag)){
-                musics.add(m.toString());
-            }
+        List<Integer> musics = new ArrayList<>(this.musics.getTags().get(tag));
+        List<String> musicsString = new ArrayList<>();
+        for(Integer m : musics){
+           musicsString.add(this.musics.get(m).toString());
         }
-
-        return musics;
+        return musicsString;
     }
 }

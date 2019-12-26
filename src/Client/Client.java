@@ -12,14 +12,14 @@ import java.util.Arrays;
 public class Client{
     private RemoteActiveSound activeSound;
     private Menu menu;
-    private String id;
+    private String username;
     private Socket socket;
 
     private Client(Socket s){
         this.socket = s;
         this.activeSound = new RemoteActiveSound(s);
         this.menu = new Menu("ActiveSound");
-        this.id = null;
+        this.username = null;
     }
 
     private int validIntegerInput(String str, Scanner scan, int impossibleValue){
@@ -72,7 +72,7 @@ public class Client{
             int id = validIntegerInput("Music's id:\n$ ", scan, -2);
 
             try {
-                this.activeSound.download(id, this.id);
+                this.activeSound.download(id, this.username);
             }
             catch (MusicNotFoundException e){
                 System.out.println(e.getMessage());
@@ -100,7 +100,7 @@ public class Client{
             int id = validIntegerInput("Music's id:\n$ ", scan, -2);
 
             try {
-                this.activeSound.download(id, this.id);
+                this.activeSound.download(id, this.username);
             }
             catch (MusicNotFoundException e){
                 System.out.println(e.getMessage());
@@ -135,7 +135,7 @@ public class Client{
         });
 
         this.menu.addOption("Logoff", ()->{
-            this.activeSound.logOff(this.id);
+            this.activeSound.logOff(this.username);
             authenticationPage();
         });
 
@@ -156,7 +156,7 @@ public class Client{
             try{
                 this.activeSound.login(username, password, socket);
                 System.out.println("Welcome, " + username);
-                this.id = username;
+                this.username = username;
                 mainPage();
             }
             catch(InvalidPasswordException | UserAlreadyOnlineException | UserNotRegisteredException e){
