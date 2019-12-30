@@ -101,8 +101,8 @@ public class RemoteActiveSound implements ActiveSound {
         this.out.flush();
 
         try {
-            int fileSize = Integer.parseInt(this.in.readLine().split(" ")[1]);
-            this.out.println("ok ready");
+            int fileSize = Integer.parseInt(this.in.readLine().split(" ")[2]);
+            this.out.println("ok");
             this.out.flush();
 
             InputStream fin = socket.getInputStream();

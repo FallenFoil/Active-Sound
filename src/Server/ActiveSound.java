@@ -147,7 +147,9 @@ public class ActiveSound implements Data.ActiveSound {
             throws FileNotFoundException {
         List tagsSplitted = new ArrayList<>(Arrays.asList( tags.split("[|]")));
         int newId = musics.getNewId();
-        Music toUpload = new Music(newId, title, author, year, tagsSplitted, 0,path, Integer.parseInt(size));
+        String newPath = "Uploaded/"+newId;
+        int fileSize = Integer.parseInt(size);
+        Music toUpload = new Music(newId, title, author, year, tagsSplitted, 0,newPath, fileSize);
         Socket s = sessions.get(username);
 
         try {
@@ -158,7 +160,7 @@ public class ActiveSound implements Data.ActiveSound {
 
             byte[] bytes = new byte[16 * 1024];
             int count, x = 0;
-            while (x < Integer.parseInt(size) &&(count = fin.read(bytes)) > 0 ) {
+            while (x < fileSize &&(count = fin.read(bytes)) > 0 ) {
                 x += count;
                 System.out.println("coisas");
                 fout.write(bytes, 0, count);
@@ -172,7 +174,7 @@ public class ActiveSound implements Data.ActiveSound {
             e.printStackTrace();
         }
         musics.add(toUpload);
-        Music m = musics.get(toUpload.getId());
+        Music m = musics.get(newId);
         String musica = m.toString();
 
         System.out.println(musica);
@@ -187,7 +189,8 @@ public class ActiveSound implements Data.ActiveSound {
             Socket s = sessions.get(username);
             PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
             out.println("Preparing download " + toDownload.size());
-            if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok ready"));{
+            out.flush();
+            if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok")){
             Thread download = new Thread(new DownloadThread(toDownload, s));
             download.start();
             download.join();
