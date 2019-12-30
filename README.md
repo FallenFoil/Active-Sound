@@ -7,6 +7,7 @@ Active-Sound is sharing platform that allows musicians to share their creations.
 ## Deadline
 
 * __3 de janeiro 2020__
+* [relatorio](https://www.overleaf.com/1113612863crkbvmtnyjhc)
 
 ## Functionalities
 
