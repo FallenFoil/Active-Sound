@@ -35,7 +35,9 @@ public class Musics {
         lock();
         for(String tag : newTags){
             if(tags.containsKey(tag)){
-                tags.get(tag).add(music.getId());
+                if(!tags.get(tag).contains(music.getId())) {
+                    tags.get(tag).add(music.getId());
+                }
             }else{
                 ArrayList<Integer> newMusicTag = new ArrayList<>();
                 newMusicTag.add(music.getId());
@@ -58,7 +60,13 @@ public class Musics {
 
     public int getNewId() {
         synchronized (this){
-        return newId++;
+            return newId++;
+        }
+    }
+
+    public int currentId(){
+        synchronized (this){
+            return newId;
         }
     }
 

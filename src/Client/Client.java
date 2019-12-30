@@ -72,7 +72,7 @@ public class Client{
             int id = validIntegerInput("Music's id:\n$ ", scan, -2);
 
             try {
-                this.activeSound.download(id, this.username);
+                this.activeSound.download(id, this.username,0);
             }
             catch (MusicNotFoundException e){
                 System.out.println(e.getMessage());
@@ -100,7 +100,7 @@ public class Client{
             int id = validIntegerInput("Music's id:\n$ ", scan, -2);
 
             try {
-                this.activeSound.download(id, this.username);
+                this.activeSound.download(id, this.username,0);
             }
             catch (MusicNotFoundException e){
                 System.out.println(e.getMessage());
@@ -125,7 +125,7 @@ public class Client{
             String path = scan.nextLine();
 
             try {
-                this.activeSound.upload(title, author, year, tags, path);
+                this.activeSound.upload(title, author, year, tags, path,this.username,"0");
             }
             catch (FileNotFoundException e){
                 System.out.println(e.getMessage());

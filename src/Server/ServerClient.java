@@ -3,6 +3,9 @@ package Server;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import Data.*;
 
@@ -42,7 +45,11 @@ public class ServerClient implements Runnable{
                             out.flush();
                             break;
                         case "download":
-                            this.app.download(Integer.parseInt(args[1]),this.id);
+                            this.app.download(Integer.parseInt(args[1]),this.id,0);
+                            break;
+                        case "upload":
+                            this.app.upload(args[1],args[2],Integer.parseInt(args[3]),args[4],args[5],this.id,args[7]);
+                            break;
                         case "search":
                             StringBuilder sb = new StringBuilder();
                             for(String music : this.app.search(args[1])){

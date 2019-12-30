@@ -2,12 +2,9 @@ package Server;
 
 import Data.*;
 
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
@@ -146,21 +143,56 @@ public class ActiveSound implements Data.ActiveSound {
         sessions.remove(username);
     }
 
-    public void upload(String title, String author, int year, String tags, String path) throws FileNotFoundException {
+    public void upload(String title, String author, int year, String tags, String path, String username ,String size)
+            throws FileNotFoundException {
+        List tagsSplitted = new ArrayList<>(Arrays.asList( tags.split("[|]")));
+        int newId = musics.getNewId();
+        Music toUpload = new Music(newId, title, author, year, tagsSplitted, 0,path, Integer.parseInt(size));
+        Socket s = sessions.get(username);
 
+        try {
+            File targetDir = new File("Uploaded");
+            File file = new File(targetDir, Integer.toString(newId));
+            FileOutputStream fout = new FileOutputStream(file);
+            InputStream fin = s.getInputStream();
+
+            byte[] bytes = new byte[16 * 1024];
+            int count, x = 0;
+            while (x < Integer.parseInt(size) &&(count = fin.read(bytes)) > 0 ) {
+                x += count;
+                System.out.println("coisas");
+                fout.write(bytes, 0, count);
+                System.out.println(bytes);
+                fout.flush();
+            }
+            System.out.println("saiu");
+            fout.flush();
+            fout.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        musics.add(toUpload);
+        Music m = musics.get(toUpload.getId());
+        String musica = m.toString();
+
+        System.out.println(musica);
     }
 
-    public void download(int id, String username) throws MusicNotFoundException {
+    public void download(int id, String username, int size) throws MusicNotFoundException {
         if(!musics.contains(id)){
                 throw new MusicNotFoundException(Integer.toString(id));
         }
         try {
             Music toDownload = musics.get(id);
             Socket s = sessions.get(username);
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
+            out.println("Preparing download " + toDownload.size());
+            if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok ready"));{
             Thread download = new Thread(new DownloadThread(toDownload, s));
             download.start();
             download.join();
             toDownload.downloadIncrement();
+            }
         }catch (Exception e){
 
         }
@@ -168,11 +200,16 @@ public class ActiveSound implements Data.ActiveSound {
     }
 
     public List<String> search(String tag){
+        if(!musics.getTags().containsKey(tag)) return new ArrayList<>();
         List<Integer> musics = new ArrayList<>(this.musics.getTags().get(tag));
         List<String> musicsString = new ArrayList<>();
         for(Integer m : musics){
            musicsString.add(this.musics.get(m).toString());
         }
         return musicsString;
+    }
+
+    public int getCurrentId(){
+        return musics.currentId();
     }
 }
