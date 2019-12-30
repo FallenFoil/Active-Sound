@@ -5,16 +5,20 @@ import Data.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
     private Musics musics;
     private HashMap<String, Socket> sessions;
+    private Lock sessionsLock;
 
     public ActiveSound(){
         this.users = new Users();
         this.musics = new Musics();
         this.sessions = new HashMap<>();
+        this.sessionsLock = new ReentrantLock();
         this.users.put("admin", "admin");
         populateServer();
     }
@@ -138,10 +142,11 @@ public class ActiveSound implements Data.ActiveSound {
             throw new UserAlreadyRegisteredException(username);
         }
     }
-
-    //Falta fazer Lock
-    public void logOff(String username) {
+    
+    public void logOff(String username){
+        this.sessionsLock.lock();
         sessions.remove(username);
+        this.sessionsLock.unlock();
     }
 
     public void upload(String title, String author, int year, String tags, String path, String username ,String size)
