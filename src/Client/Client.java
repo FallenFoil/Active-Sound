@@ -161,6 +161,7 @@ public class Client{
             }
             catch(InvalidPasswordException | UserAlreadyOnlineException | UserNotRegisteredException e){
                 System.out.println(e.getMessage());
+                this.menu.start();
             }
         });
 
