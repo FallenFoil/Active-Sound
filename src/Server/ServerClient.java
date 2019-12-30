@@ -46,6 +46,7 @@ public class ServerClient implements Runnable{
                             break;
                         case "download":
                             this.app.download(Integer.parseInt(args[1]),this.id,0);
+                            System.out.println("O DONWLOAD ACABOU FDS");
                             break;
                         case "upload":
                             this.app.upload(args[1],args[2],Integer.parseInt(args[3]),args[4],args[5],this.id,args[7]);

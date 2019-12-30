@@ -195,6 +195,7 @@ public class ActiveSound implements Data.ActiveSound {
             download.start();
             download.join();
             toDownload.downloadIncrement();
+            System.out.println("Cheguei aqui");
             }
         }catch (Exception e){
 

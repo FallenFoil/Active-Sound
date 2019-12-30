@@ -102,7 +102,7 @@ public class Client{
             try {
                 this.activeSound.download(id, this.username,0);
             }
-            catch (MusicNotFoundException e){
+            catch (Exception e){
                 System.out.println(e.getMessage());
             }
 

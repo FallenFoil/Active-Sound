@@ -114,12 +114,15 @@ public class RemoteActiveSound implements ActiveSound {
             int count, x = 0;
             while (x < fileSize && (count = fin.read(bytes)) > 0) {
                 fout.write(bytes, 0, count);
+                x += count;
             }
+            fout.flush();
             fout.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("EU RECEBI A PUTA DO FICHEIRO");
     }
 
     //Done. Needs verification
