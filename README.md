@@ -1,13 +1,13 @@
-# Active-Sound
+# ActiveSound
 
 ## Description
 
-Active-Sound is sharing platform that allows musicians to share their creations. This platform uses java 11.
+ActiveSound is sharing platform that allows musicians to share their creations. This platform uses java 11.
 
 ## Deadline
 
 * __3 de janeiro 2020__
-* [relatorio](https://www.overleaf.com/1113612863crkbvmtnyjhc)
+* [Relatorio](https://www.overleaf.com/1113612863crkbvmtnyjhc)
 
 ## Functionalities
 
