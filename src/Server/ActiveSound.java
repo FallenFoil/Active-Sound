@@ -139,6 +139,7 @@ public class ActiveSound implements Data.ActiveSound {
         }
     }
 
+    //Falta fazer Lock
     public void logOff(String username) {
         sessions.remove(username);
     }

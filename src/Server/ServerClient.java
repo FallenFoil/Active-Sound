@@ -57,6 +57,11 @@ public class ServerClient implements Runnable{
                             out.println(sb.toString());
                             out.flush();
                             break;
+                        case "logoff":
+                            this.app.logOff(args[1]);
+                            out.println("0");
+                            out.flush();
+                            break;
                         default:
                             break;
                     }

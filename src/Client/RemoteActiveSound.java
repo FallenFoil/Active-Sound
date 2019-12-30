@@ -65,9 +65,17 @@ public class RemoteActiveSound implements ActiveSound {
         }
     }
 
-    //Not Done
+    //Done. Needs verification
     public void logOff(String username){
+        this.out.println("logoff " + username);
+        this.out.flush();
 
+        try{
+            String str = in.readLine();
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     //Not Done
