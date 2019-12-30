@@ -3,9 +3,6 @@ package Server;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import Data.*;
 
@@ -79,9 +76,9 @@ public class ServerClient implements Runnable{
         }
         catch (IOException e) {
             if(e instanceof SocketException){
-                System.out.println("Connection force closed");
+                System.out.println("Connection with user: " + this.id + " force closed");
                 if(this.id!=null){
-                    this.app.getSessions().remove(this.id);
+                    this.app.logOff(this.id);
                 }
             }
             else{
