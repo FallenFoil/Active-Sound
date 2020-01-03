@@ -235,7 +235,10 @@ public class Menu{
                 String value = in.nextLine();
                 op = Integer.parseInt(value);
 
-                if(!this.options.containsKey(op)){throw new NumberFormatException();}
+                if(!this.options.containsKey(op)){
+			op = -1;
+			throw new NumberFormatException();
+		}
                 this.options.get(op).getCallback().run();
             }
             catch(NumberFormatException e){
@@ -329,7 +332,10 @@ public class Menu{
                 String value = in.nextLine();
                 op = Integer.parseInt(value);
 
-                if(!this.options.containsKey(op)){throw new NumberFormatException();}
+                if(!this.options.containsKey(op)){
+			op = -1;
+			throw new NumberFormatException();
+		}
                 this.options.get(op).getCallback().run();
             }
             catch(NumberFormatException e){
