@@ -32,7 +32,6 @@ public class DownloadThread implements Runnable {
                 out.write(bytes,0,count);
             }
             in.close();
-            System.out.println("ACABEI O CRL DO DOWNLAOD");
         }catch (Exception e){
             e.printStackTrace();
         }

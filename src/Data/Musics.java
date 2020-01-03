@@ -7,32 +7,33 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Musics {
     private HashMap<Integer, Music> musics;
-    private ReentrantLock musicsLock;
+    private RWLock musicsLock;
     private HashMap<String, List<Integer>> tags;
     int newId;
 
     public Musics(){
         musics = new HashMap<>();
-        musicsLock = new ReentrantLock();
-        tags = new HashMap<>();
+        musicsLock = new RWLock();
         tags = new HashMap<>();
         newId = 0;
     }
 
     public HashMap<Integer, Music> getMusics() {
-        synchronized(this) {
-            return new HashMap<>(musics);
-        }
+        musicsLock.readLock();
+            HashMap<Integer,Music> returnValue = new HashMap<>(musics);
+        musicsLock.readUnlock();
+        return returnValue;
     }
 
     public HashMap<String,List<Integer>> getTags(){
-        synchronized (this){
-            return new HashMap<>(tags);
-        }
+        musicsLock.readLock();
+            HashMap<String,List<Integer>> returnValue = new HashMap<>(tags);
+        musicsLock.readUnlock();
+        return returnValue;
     }
     public void add(Music music){
         List<String> newTags = music.getTags();
-        lock();
+        musicsLock.writeLock();
         for(String tag : newTags){
             if(tags.containsKey(tag)){
                 if(!tags.get(tag).contains(music.getId())) {
@@ -45,36 +46,29 @@ public class Musics {
             }
         }
         musics.put(music.getId(),music);
-        unlock();
+        musicsLock.writeUnlock();
     }
 
     public Music get(int id){
-        synchronized (this) {
-            return musics.get(id);
-        }
+        musicsLock.readLock();
+            Music toReturn =  musics.get(id);
+        musicsLock.readUnlock();
+        return toReturn;
     }
 
     public boolean contains(int id){
-        return (musics.containsKey(id));
+        musicsLock.readLock();
+            boolean check = (musics.containsKey(id));
+        musicsLock.readUnlock();
+        return check;
     }
 
     public int getNewId() {
-        synchronized (this){
-            return newId++;
-        }
+        musicsLock.writeLock();
+            int toReturn = this.newId++;
+        musicsLock.writeUnlock();
+        return toReturn;
     }
 
-    public int currentId(){
-        synchronized (this){
-            return newId;
-        }
-    }
 
-    public void lock(){
-        musicsLock.lock();
-    }
-
-    public void unlock(){
-        musicsLock.unlock();
-    }
 }

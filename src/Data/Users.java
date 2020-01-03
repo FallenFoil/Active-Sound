@@ -4,41 +4,39 @@ import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Users {
-    private ReentrantLock usersLock;
+    private RWLock usersLock;
     private HashMap<String, User> users;
 
     public Users(){
         users = new HashMap<>();
-        usersLock = new ReentrantLock();
+        usersLock = new RWLock();
     }
 
     public void put(String username, String password){
-        lock();
-        users.put(username,new User(username,password));
-        unlock();
+        usersLock.writeLock();
+            users.put(username,new User(username,password));
+        usersLock.writeUnlock();
     }
 
     public User get(String username){
-        synchronized (this) {
-            return users.get(username);
-        }
+        usersLock.readLock();
+            User toReturn = users.get(username);
+        usersLock.readUnlock();
+        return toReturn;
     }
 
     public boolean contains(String username){
-        synchronized (this) {
-            return users.containsKey(username);
-        }
+        usersLock.readLock();
+            boolean check = users.containsKey(username);
+        usersLock.readUnlock();
+        return check;
     }
 
-    public void lock(){
-        usersLock.lock();
-    }
-
-    public void unlock(){
-        usersLock.unlock();
-    }
 
     public HashMap<String, User> getUsers() {
-        return new HashMap<>(users);
+        usersLock.readLock();
+            HashMap<String,User> toReturn = new HashMap<>(users);
+        usersLock.readUnlock();
+        return toReturn;
     }
 }

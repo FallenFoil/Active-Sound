@@ -123,10 +123,10 @@ public class ActiveSound implements Data.ActiveSound {
             }
 
             if(this.users.get(username).authentication(password)){
-                users.lock();
                 users.put(username,password);
+                sessionsLock.lock();
                 sessions.put(username,s);
-                users.unlock();
+                sessionsLock.unlock();
             }
             else throw new InvalidPasswordException();
 
@@ -134,9 +134,7 @@ public class ActiveSound implements Data.ActiveSound {
 
     public void register(String username, String password) throws UserAlreadyRegisteredException{
         if(!users.contains(username)){
-            users.lock();
             users.put(username,password);
-            users.unlock();
         }
         else{
             throw new UserAlreadyRegisteredException(username);
@@ -201,7 +199,6 @@ public class ActiveSound implements Data.ActiveSound {
             download.start();
             download.join();
             toDownload.downloadIncrement();
-            System.out.println("Cheguei aqui");
             }
         }catch (Exception e){
 
@@ -219,7 +216,4 @@ public class ActiveSound implements Data.ActiveSound {
         return musicsString;
     }
 
-    public int getCurrentId(){
-        return musics.currentId();
-    }
 }

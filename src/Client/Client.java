@@ -69,12 +69,15 @@ public class Client{
         });
 
         this.menu.addOption("Download", ()->{
-            int id = validIntegerInput("Music's id:\n$ ", scan, -2);
-
+            System.out.println("Music's IDs (Separated by ','):\n$ ");
+            String ids = scan.nextLine();
+            String[] idsSplit = ids.split("[,]");
             try {
-                this.activeSound.download(id, this.username,0);
+                for(String id : idsSplit) {
+                    this.activeSound.download(Integer.parseInt(id), this.username, 0);
+                }
             }
-            catch (MusicNotFoundException e){
+            catch (Exception e){
                 System.out.println(e.getMessage());
             }
 
@@ -97,10 +100,13 @@ public class Client{
         });
 
         this.menu.addOption("Download", ()->{
-            int id = validIntegerInput("Music's id:\n$ ", scan, -2);
-
+            System.out.println("Music's IDs (Separated by ','):\n$ ");
+            String ids = scan.nextLine();
+            String[] idsSplit = ids.split("[,]");
             try {
-                this.activeSound.download(id, this.username,0);
+                for(String id : idsSplit) {
+                    this.activeSound.download(Integer.parseInt(id), this.username, 0);
+                }
             }
             catch (Exception e){
                 System.out.println(e.getMessage());

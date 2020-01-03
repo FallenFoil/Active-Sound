@@ -130,7 +130,6 @@ public class RemoteActiveSound implements ActiveSound {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("EU RECEBI A PUTA DO FICHEIRO");
     }
 
     //Done. Needs verification
