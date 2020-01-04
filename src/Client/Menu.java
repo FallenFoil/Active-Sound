@@ -328,14 +328,13 @@ public class Menu{
         while(op==-1){
             System.out.print("$ ");
             try{
-
                 String value = in.nextLine();
                 op = Integer.parseInt(value);
 
                 if(!this.options.containsKey(op)){
-			op = -1;
-			throw new NumberFormatException();
-		}
+                    op = -1;
+                    throw new NumberFormatException();
+                }
                 this.options.get(op).getCallback().run();
             }
             catch(NumberFormatException e){
