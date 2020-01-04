@@ -70,5 +70,11 @@ public class Musics {
         return toReturn;
     }
 
+    public void remove(int id){
+        musicsLock.writeLock();
+            musics.remove(id);
+        musicsLock.writeUnlock();
+    }
+
 
 }

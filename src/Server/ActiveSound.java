@@ -216,4 +216,8 @@ public class ActiveSound implements Data.ActiveSound {
         return musicsString;
     }
 
+    public void removeMusic(int id){
+        this.musics.remove(id);
+    }
+
 }

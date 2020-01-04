@@ -46,6 +46,11 @@ public class ServerClient implements Runnable{
                                 out.println("No");
                                 out.flush();
                                 break;
+                            }if(new File("Uploaded/"+args[1]).length() == 0 ){
+                                out.println("No");
+                                out.flush();
+                                this.app.removeMusic(Integer.parseInt(args[1]));
+                                break;
                             }
                             this.app.download(Integer.parseInt(args[1]),this.id,0);
                             break;
