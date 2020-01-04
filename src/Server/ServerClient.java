@@ -49,6 +49,11 @@ public class ServerClient implements Runnable{
                             break;
                         case "search":
                             StringBuilder sb = new StringBuilder();
+                            if(args.length == 1){
+                                out.println("");
+                                out.flush();
+                                break;
+                            }
                             for(String music : this.app.search(args[1])){
                                 sb.append(music).append("|");
                             }

@@ -80,7 +80,8 @@ public class RemoteActiveSound implements ActiveSound {
 
     //Not Done
     public void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException{
-
+        String[] pathSplitted = path.split("[.]");
+        if(!pathSplitted[1].equals("mp3")) throw new FileNotFoundException("invalid file format");
         String newPath = "ToUpload/" + path;
         File toUpload = new File(newPath);
         long fileSize = toUpload.length();
@@ -115,7 +116,7 @@ public class RemoteActiveSound implements ActiveSound {
 
             InputStream fin = socket.getInputStream();
             File targetDir = new File("Downloaded");
-            File file = new File(targetDir, username + id);
+            File file = new File(targetDir, username + id+".mp3");
             FileOutputStream fout = new FileOutputStream(file);
 
             byte[] bytes = new byte[16 * 1024];

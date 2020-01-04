@@ -201,8 +201,7 @@ public class Client{
             client.authenticationPage();
         }
         catch(Exception e){
-            //System.out.println(e.getMessage());
-            e.printStackTrace();
+            System.out.println("Server offline");
         }
     }
 }
