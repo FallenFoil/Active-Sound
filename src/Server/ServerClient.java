@@ -42,6 +42,11 @@ public class ServerClient implements Runnable{
                             out.flush();
                             break;
                         case "download":
+                            if(!app.getMusics().containsKey(Integer.parseInt(args[1]))){
+                                out.println("No");
+                                out.flush();
+                                break;
+                            }
                             this.app.download(Integer.parseInt(args[1]),this.id,0);
                             break;
                         case "upload":

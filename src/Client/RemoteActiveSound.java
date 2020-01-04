@@ -81,10 +81,13 @@ public class RemoteActiveSound implements ActiveSound {
     //Not Done
     public void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException{
         String[] pathSplitted = path.split("[.]");
+        if(pathSplitted.length == 1) throw new FileNotFoundException("invalid file format");
         if(!pathSplitted[1].equals("mp3")) throw new FileNotFoundException("invalid file format");
+
         String newPath = "ToUpload/" + path;
         File toUpload = new File(newPath);
         long fileSize = toUpload.length();
+        if(fileSize == 0) throw new FileNotFoundException("File not found");
         this.out.println("upload " + title + " " + author + " " + year + " " + tags + " " + path + " " + username + " " + fileSize);
         this.out.flush();
 
@@ -110,24 +113,28 @@ public class RemoteActiveSound implements ActiveSound {
         this.out.flush();
 
         try {
-            int fileSize = Integer.parseInt(this.in.readLine().split(" ")[2]);
-            this.out.println("ok");
-            this.out.flush();
+            String str = this.in.readLine();
+            if(str.equals("No")){
+                System.out.println("Music " + id + " not found");
+            }else {
+                int fileSize = Integer.parseInt(str.split(" ")[2]);
+                this.out.println("ok");
+                this.out.flush();
 
-            InputStream fin = socket.getInputStream();
-            File targetDir = new File("Downloaded");
-            File file = new File(targetDir, username + id+".mp3");
-            FileOutputStream fout = new FileOutputStream(file);
+                InputStream fin = socket.getInputStream();
+                File targetDir = new File("Downloaded");
+                File file = new File(targetDir, username + id + ".mp3");
+                FileOutputStream fout = new FileOutputStream(file);
 
-            byte[] bytes = new byte[16 * 1024];
-            int count, x = 0;
-            while (x < fileSize && (count = fin.read(bytes)) > 0) {
-                fout.write(bytes, 0, count);
-                x += count;
+                byte[] bytes = new byte[16 * 1024];
+                int count, x = 0;
+                while (x < fileSize && (count = fin.read(bytes)) > 0) {
+                    fout.write(bytes, 0, count);
+                    x += count;
+                }
+                fout.flush();
+                fout.close();
             }
-            fout.flush();
-            fout.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
