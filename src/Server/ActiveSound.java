@@ -29,94 +29,57 @@ public class ActiveSound implements Data.ActiveSound {
         this.notificationsLock = new ReentrantLock();
     }
 
-    public void populateServer(){
+    private void populateServer(){
         List<String> tags = new ArrayList<>();
         Music music;
 
-//Music 1
-        /*
-        tags.add("rock");
-        music = new Music(musics.getNewId(), "Uprising", "Muse", 2009, tags, 10475, "String path", 10);
+        //Music 0
+        tags.add("jazz");
+        music = new Music(musics.getNewId(), "Name4", "Author4", 2004, tags, 14, "", 0);
         this.musics.add(music);
 
-//Music 2
-        tags.clear();
-        tags.add("electro");
-        music = new Music(musics.getNewId(), "Secret Agent", "Odd Chap", 2017, tags, 10, "String path", 10);
-        this.musics.add(music);
-
-//Music 3
-        tags.clear();
-        tags.add("electro");
-        music = new Music(musics.getNewId(), "Sandstorm", "Darude", 2000, tags, 104, "String path", 10);
-        this.musics.add(music);
-
-//Music 4
-        tags.clear();
-        tags.add("rock");
-        music = new Music(musics.getNewId(), "Seven Nation Army", "White Stripes", 2003, tags, 1047, "String path", 10);
-        this.musics.add(music);*/
-
-//Music 5
+        //Music 1
         tags.clear();
         tags.add("jazz");
-        music = new Music(musics.getNewId(), "Name4", "Author4", 2004, tags, 14, "String path", 10);
+        music = new Music(musics.getNewId(), "Name5", "Author5", 2005, tags, 15, "", 0);
         this.musics.add(music);
 
-//Music 6
-        tags.clear();
-        tags.add("jazz");
-        music = new Music(musics.getNewId(), "Name5", "Author5", 2005, tags, 15, "String path", 10);
-        this.musics.add(music);
-
-//Music 7
+        //Music 2
         tags.clear();
         tags.add("rock");
-        music = new Music(musics.getNewId(), "Name6", "Author6", 2006, tags, 16, "String path", 10);
+        music = new Music(musics.getNewId(), "Name6", "Author6", 2006, tags, 16, "", 0);
         this.musics.add(music);
 
-//Music 8
+        //Music 3
         tags.clear();
         tags.add("pop");
-        music = new Music(musics.getNewId(), "Name7", "Author7", 2007, tags, 17, "String path", 10);
+        music = new Music(musics.getNewId(), "Name7", "Author7", 2007, tags, 17, "", 0);
         this.musics.add(music);
 
-//Music 9
+        //Music 4
         tags.clear();
         tags.add("edm");
-        music = new Music(musics.getNewId(), "Name8", "Author8", 2008, tags, 18, "String path", 10);
+        music = new Music(musics.getNewId(), "Name8", "Author8", 2008, tags, 18, "", 0);
         this.musics.add(music);
 
-//Music 10
+        //Music 5
         tags.clear();
         tags.add("jazz");
-        music = new Music(musics.getNewId(), "Name9", "Author9", 2009, tags, 19, "String path", 10);
+        music = new Music(musics.getNewId(), "Name9", "Author9", 2009, tags, 19, "", 0);
         this.musics.add(music);
 
-//Music 11
+        //Music 6
         tags.clear();
         tags.add("rock");
-        music = new Music(musics.getNewId(), "Name10", "Author10", 2010, tags, 110, "String path", 10);
+        music = new Music(musics.getNewId(), "Name10", "Author10", 2010, tags, 110, "", 0);
         this.musics.add(music);
 
-//Music 12
+        //Music 7
         tags.clear();
         tags.add("rock");
         tags.add("jazz");
-        music = new Music(musics.getNewId(), "Name11", "Author11", 2011, tags, 111, "String path", 10);
+        music = new Music(musics.getNewId(), "Name11", "Author11", 2011, tags, 111, "", 0);
         this.musics.add(music);
-    }
-
-    public HashMap<Integer, Music> getMusics() {
-        return musics.getMusics();
-    }
-
-    public HashMap<String, User> getUsers() {
-        return users.getUsers();
-    }
-
-    public HashMap<String, Socket> getSessions(){
-        return new HashMap<>(this.sessions);
     }
 
     public void login(String username, String password,Socket s) throws UserAlreadyOnlineException, UserNotRegisteredException, InvalidPasswordException{
@@ -154,7 +117,7 @@ public class ActiveSound implements Data.ActiveSound {
         this.sessionsLock.unlock();
     }
 
-    public void upload(String title, String author, int year, String tags, String path, String username ,String size) throws FileNotFoundException {
+    public void upload(String title, String author, int year, String tags, String path, String username, String size) throws UploadErrorException {
         List<String> tagsSplitted = new ArrayList<>(Arrays.asList( tags.split("[,]")));
         int newId = musics.getNewId();
         String newPath = "Uploaded/" + newId + ".mp3";
@@ -164,7 +127,7 @@ public class ActiveSound implements Data.ActiveSound {
 
         try {
             File targetDir = new File("Uploaded");
-            File file = new File(targetDir, Integer.toString(newId) + ".mp3");
+            File file = new File(targetDir, newId + ".mp3");
             FileOutputStream fout = new FileOutputStream(file);
             InputStream fin = s.getInputStream();
 
@@ -178,8 +141,9 @@ public class ActiveSound implements Data.ActiveSound {
             fout.flush();
             fout.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new UploadErrorException();
         }
+
         this.musics.add(toUpload);
         this.users.get(username).addUpload(toUpload.getId());
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -188,9 +152,13 @@ public class ActiveSound implements Data.ActiveSound {
         this.notificationsLock.unlock();
     }
 
-    public void download(int id, String username, int size) throws MusicNotFoundException {
+    public void download(int id, String username, int size) throws MusicNotFoundException, DownloadErrorException {
         if(!musics.contains(id)){
-                throw new MusicNotFoundException(Integer.toString(id));
+            throw new MusicNotFoundException(Integer.toString(id));
+        }
+        if(new File("Uploaded/" + id + ".mp3").length() == 0 ){
+            removeMusic(id);
+            throw new MusicNotFoundException(Integer.toString(id));
         }
         try {
             Music toDownload = musics.get(id);
@@ -200,8 +168,8 @@ public class ActiveSound implements Data.ActiveSound {
             out.flush();
             if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok")){
                 queue.addRequest(new Request(id,username));
-                while(!queue.containsDownload(username)){
-                }
+                //noinspection StatementWithEmptyBody
+                while(!queue.containsDownload(username));
                 Thread download = new Thread(new DownloadThread(toDownload,s));
                 download.start();
                 queue.removeDownload(username);
@@ -209,27 +177,36 @@ public class ActiveSound implements Data.ActiveSound {
                 download.join();
                 users.get(username).addDownload(id);
             }
-        }catch (Exception e){
-
+        }
+        catch(Exception e){
+            throw new DownloadErrorException();
         }
 
     }
 
     public List<String> search(String tag){
-        if(!musics.getTags().containsKey(tag)) return new ArrayList<>();
-        List<Integer> musics = new ArrayList<>(this.musics.getTags().get(tag));
+        List<Integer> allMusics;
+
+        if(tag.isEmpty()){
+            allMusics = new ArrayList<>(this.musics.getMusics().keySet());
+        }
+        else{
+            if(!musics.getTags().containsKey(tag)) return new ArrayList<>();
+            allMusics = new ArrayList<>(this.musics.getTags().get(tag));
+        }
+
         List<String> musicsString = new ArrayList<>();
-        for(Integer m : musics){
+        for(Integer m : allMusics){
            musicsString.add(this.musics.get(m).toString());
         }
         return musicsString;
     }
 
-    public void removeMusic(int id){
+    private void removeMusic(int id){
         this.musics.remove(id);
     }
 
-    public RequestQueue getQueue(){
+    RequestQueue getQueue(){
         return queue;
     }
 

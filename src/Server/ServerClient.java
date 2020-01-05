@@ -11,7 +11,7 @@ public class ServerClient implements Runnable{
     private Socket so;
     private String id;
 
-    public ServerClient(ActiveSound newApp, Socket so){
+    ServerClient(ActiveSound newApp, Socket so){
         this.app = newApp;
         this.so = so;
         this.id = null;
@@ -42,21 +42,10 @@ public class ServerClient implements Runnable{
                             out.flush();
                             break;
                         case "download":
-                            if(!app.getMusics().containsKey(Integer.parseInt(args[1]))){
-                                out.println("No");
-                                out.flush();
-                                break;
-                            }
-                            if(new File("Uploaded/" + args[1] + ".mp3").length() == 0 ){
-                                out.println("No");
-                                out.flush();
-                                this.app.removeMusic(Integer.parseInt(args[1]));
-                                break;
-                            }
                             synchronized (this) {
                                 this.app.download(Integer.parseInt(args[1]), this.id, 0);
-                                break;
                             }
+                            break;
                         case "upload":
                             String[] realArgs = str.split(" ;");
                             synchronized (this) {
@@ -65,12 +54,14 @@ public class ServerClient implements Runnable{
                             break;
                         case "search":
                             StringBuilder sb = new StringBuilder();
+                            String tag;
                             if(args.length == 1){
-                                out.println("");
-                                out.flush();
-                                break;
+                                tag = "";
                             }
-                            for(String music : this.app.search(args[1])){
+                            else{
+                                tag = args[1];
+                            }
+                            for(String music : this.app.search(tag)){
                                 sb.append(music).append("|");
                             }
                             if(sb.length()>0){sb.deleteCharAt(sb.length()-1).append(";");}
@@ -95,7 +86,7 @@ public class ServerClient implements Runnable{
                             break;
                     }
                 }
-                catch (InvalidPasswordException | UserAlreadyOnlineException | UserAlreadyRegisteredException | UserNotRegisteredException | MusicNotFoundException e){
+                catch (InvalidPasswordException | UserAlreadyOnlineException | UserAlreadyRegisteredException | UserNotRegisteredException | MusicNotFoundException | DownloadErrorException | UploadErrorException e){
                     out.println(e.getMessage());
                     out.flush();
                 }
@@ -119,5 +110,6 @@ public class ServerClient implements Runnable{
                 System.out.println(e.getMessage());
             }
         }
+
     }
 }

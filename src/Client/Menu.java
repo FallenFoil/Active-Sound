@@ -447,6 +447,10 @@ public class Menu{
         this.step = 4;
     }
 
+    public static String redText(String str){
+        return new StringBuilder("\u001B[31m" + str + "\u001B[0m").toString();
+    }
+
     public interface CallBack {
         void run();
     }

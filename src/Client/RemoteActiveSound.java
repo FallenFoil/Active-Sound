@@ -79,7 +79,7 @@ public class RemoteActiveSound implements ActiveSound {
     }
 
     //Not Done
-    public void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException{
+    public void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException, UploadErrorException{
         String[] pathSplitted = path.split("[.]");
         if(pathSplitted.length == 1) throw new FileNotFoundException("Invalid file format");
         if(!pathSplitted[1].equals("mp3")) throw new FileNotFoundException("Invalid file format");
@@ -107,18 +107,23 @@ public class RemoteActiveSound implements ActiveSound {
         } catch (Exception e){
             e.printStackTrace();
         }
+        System.out.println("Uploaded successfully");
     }
 
     //Not Done
-    public void download(int id, String username, int size) throws MusicNotFoundException {
+    public void download(int id, String username, int size) throws MusicNotFoundException, DownloadErrorException {
         this.out.println("download " + id);
         this.out.flush();
 
         try {
             String str = this.in.readLine();
-            if(str.equals("No")){
-                System.out.println("Music " + id + " not found");
-            }else {
+            if(str.charAt(0) == '5'){
+                throw new MusicNotFoundException(Integer.toString(id));
+            }
+            if(str.charAt(0) == '6'){
+                throw new DownloadErrorException();
+            }
+            else{
                 int fileSize = Integer.parseInt(str.split(" ")[2]);
                 this.out.println("ok");
                 this.out.flush();
@@ -143,6 +148,8 @@ public class RemoteActiveSound implements ActiveSound {
         catch (IOException e) {
             e.getMessage();
         }
+
+        System.out.println("Downloaded successfully");
     }
 
     //Done. Needs verification

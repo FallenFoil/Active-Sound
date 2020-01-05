@@ -1,24 +1,20 @@
 package Server;
 
 import Data.Music;
-import Data.Request;
-import Data.RequestQueue;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class DownloadThread implements Runnable {
 
-    Music m;
-    Socket s;
+    private Music m;
+    private Socket s;
     //ReentrantLock lock = new ReentrantLock();
 
-    public DownloadThread(Music m, Socket s) {
+    DownloadThread(Music m, Socket s) {
        this.m = m;
        this.s = s;
     }

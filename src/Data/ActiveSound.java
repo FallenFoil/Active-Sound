@@ -11,9 +11,9 @@ public interface ActiveSound {
 
     void logOff(String username);
 
-    void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException;
+    void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException, UploadErrorException;
 
-    void download(int id, String username, int size) throws MusicNotFoundException;
+    void download(int id, String username, int size) throws MusicNotFoundException, DownloadErrorException;
 
     //A String tags tem o seguinte formato: <tag>,<tag>,<tag>,...
     List<String> search(String tags);

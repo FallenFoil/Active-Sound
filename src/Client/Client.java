@@ -22,7 +22,9 @@ public class Client{
         this.username = null;
     }
 
-    private int validIntegerInput(String str, Scanner scan, int impossibleValue){
+    private int validIntegerInput(Scanner scan){
+        String str = "Year:\n$ ";
+        int impossibleValue = -1;
         int value = impossibleValue;
         while(value==impossibleValue){
             try{
@@ -31,7 +33,7 @@ public class Client{
                 value = Integer.parseInt(yearStr);
             }
             catch(NumberFormatException e){
-                System.out.println("Invalid Input");
+                System.out.println(Menu.redText("Invalid Input"));
             }
         }
 
@@ -77,11 +79,11 @@ public class Client{
                     this.activeSound.download(Integer.parseInt(id), this.username, 0);
                 }
             }
-            catch (MusicNotFoundException e){
-                System.out.println(e.getMessage());
+            catch (MusicNotFoundException | DownloadErrorException e){
+                System.out.println(Menu.redText(e.getMessage().substring(2)));
             }
             catch (NumberFormatException e){
-                System.out.println("Wrong Input");
+                System.out.println(Menu.redText("Wrong Input"));
             }
 
             this.menu.start();
@@ -143,11 +145,11 @@ public class Client{
                     this.activeSound.download(Integer.parseInt(id), this.username, 0);
                 }
             }
-            catch (MusicNotFoundException e){
-                System.out.println(e.getMessage());
+            catch (MusicNotFoundException | DownloadErrorException e){
+                System.out.println(Menu.redText(e.getMessage().substring(2)));
             }
             catch (NumberFormatException e){
-                System.out.println("Wrong Input");
+                System.out.println(Menu.redText("Wrong Input"));
             }
 
             this.menu.start();
@@ -160,7 +162,7 @@ public class Client{
             System.out.print("Author:\n$ ");
             String author = scan.nextLine();
 
-            int year = validIntegerInput("Year:\n$ ", scan, -1);
+            int year = validIntegerInput(scan);
 
             System.out.print("Tags (separated by ','):\n$ ");
             String tags = scan.nextLine().toLowerCase().replaceAll("\\s+", "");
@@ -172,15 +174,16 @@ public class Client{
                 this.activeSound.upload(title, author, year, tags, path,this.username,"0");
             }
             catch (FileNotFoundException e){
-                System.out.println(e.getMessage());
+                System.out.println(Menu.redText(e.getMessage()));
+            }
+            catch (UploadErrorException e){
+                System.out.println(Menu.redText(e.getMessage().substring(2)));
             }
 
             this.menu.start();
         });
 
-        this.menu.addOption("Notifications", ()->{
-            notificationsPage(this.activeSound.getNotifications());
-        });
+        this.menu.addOption("Notifications", ()-> notificationsPage(this.activeSound.getNotifications()));
 
         this.menu.addOption("Logoff", ()->{
             this.activeSound.logOff(this.username);
@@ -208,7 +211,7 @@ public class Client{
                 mainPage();
             }
             catch(InvalidPasswordException | UserAlreadyOnlineException | UserNotRegisteredException e){
-                System.out.println(e.getMessage());
+                System.out.println(Menu.redText(e.getMessage().substring(2)));
                 this.menu.start();
             }
         });
@@ -224,7 +227,7 @@ public class Client{
                 System.out.println(username + " has been registered");
             }
             catch(UserAlreadyRegisteredException e){
-                System.out.println(e.getMessage());
+                System.out.println(Menu.redText(e.getMessage().substring(2)));
             }
 
             this.menu.start();
@@ -243,7 +246,7 @@ public class Client{
             client.authenticationPage();
         }
         catch(Exception e){
-            System.out.println("Server offline");
+            System.out.println(Menu.redText("Server offline"));
         }
     }
 }

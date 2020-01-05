@@ -8,14 +8,12 @@ public class Server {
         try{
             ServerSocket s = new ServerSocket(25567);
             ActiveSound app = new ActiveSound();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while(true) {
-                        app.getQueue().nextRequest();
-                    }
+            new Thread(()->{
+                while(true) {
+                    app.getQueue().nextRequest();
                 }
             }).start();
+
             while(true){
                 new Thread(new ServerClient(app, s.accept())).start();
             }
