@@ -131,6 +131,7 @@ public class RemoteActiveSound implements ActiveSound {
                 while (x < fileSize && (count = fin.read(bytes)) > 0) {
                     fout.write(bytes, 0, count);
                     x += count;
+                    fout.flush();
                 }
                 fout.flush();
                 fout.close();

@@ -8,11 +8,15 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static Server.Server.MAXDOWN;
+
+
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
     private Musics musics;
     private HashMap<String, Socket> sessions;
     private Lock sessionsLock;
+    private volatile RequestQueue queue = new RequestQueue();
 
     public ActiveSound(){
         this.users = new Users();
@@ -195,10 +199,16 @@ public class ActiveSound implements Data.ActiveSound {
             out.println("Preparing download " + toDownload.size());
             out.flush();
             if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok")){
-            Thread download = new Thread(new DownloadThread(toDownload, s));
-            download.start();
-            download.join();
-            toDownload.downloadIncrement();
+                System.out.println("Aqui");
+                queue.addRequest(new Request(id,username));
+                System.out.println("ISTO");
+                while(!queue.containsDownload(username)){
+                }
+                System.out.println("ISTO2");
+                Thread download = new Thread(new DownloadThread(toDownload,s));
+                download.start();
+                queue.removeDownload(username);
+                download.join();
             }
         }catch (Exception e){
 
@@ -220,4 +230,7 @@ public class ActiveSound implements Data.ActiveSound {
         this.musics.remove(id);
     }
 
+    public RequestQueue getQueue(){
+        return queue;
+    }
 }
