@@ -81,14 +81,14 @@ public class RemoteActiveSound implements ActiveSound {
     //Not Done
     public void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException{
         String[] pathSplitted = path.split("[.]");
-        if(pathSplitted.length == 1) throw new FileNotFoundException("invalid file format");
-        if(!pathSplitted[1].equals("mp3")) throw new FileNotFoundException("invalid file format");
+        if(pathSplitted.length == 1) throw new FileNotFoundException("Invalid file format");
+        if(!pathSplitted[1].equals("mp3")) throw new FileNotFoundException("Invalid file format");
 
         String newPath = "ToUpload/" + path;
         File toUpload = new File(newPath);
         long fileSize = toUpload.length();
         if(fileSize == 0) throw new FileNotFoundException("File not found");
-        this.out.println("upload " + title + " " + author + " " + year + " " + tags + " " + path + " " + username + " " + fileSize);
+        this.out.println("upload ;" + title + " ;" + author + " ;" + year + " ;" + tags + " ;" + path + " ;" + username + " ;" + fileSize);
         this.out.flush();
 
         try {
@@ -139,8 +139,9 @@ public class RemoteActiveSound implements ActiveSound {
                     fout.close();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.getMessage();
         }
     }
 

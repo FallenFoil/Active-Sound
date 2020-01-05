@@ -31,6 +31,7 @@ public class ActiveSound implements Data.ActiveSound {
         Music music;
 
 //Music 1
+        /*
         tags.add("rock");
         music = new Music(musics.getNewId(), "Uprising", "Muse", 2009, tags, 10475, "String path", 10);
         this.musics.add(music);
@@ -51,7 +52,7 @@ public class ActiveSound implements Data.ActiveSound {
         tags.clear();
         tags.add("rock");
         music = new Music(musics.getNewId(), "Seven Nation Army", "White Stripes", 2003, tags, 1047, "String path", 10);
-        this.musics.add(music);
+        this.musics.add(music);*/
 
 //Music 5
         tags.clear();
@@ -152,16 +153,16 @@ public class ActiveSound implements Data.ActiveSound {
 
     public void upload(String title, String author, int year, String tags, String path, String username ,String size)
             throws FileNotFoundException {
-        List tagsSplitted = new ArrayList<>(Arrays.asList( tags.split("[|]")));
+        List<String> tagsSplitted = new ArrayList<>(Arrays.asList( tags.split("[,]")));
         int newId = musics.getNewId();
-        String newPath = "Uploaded/"+newId;
+        String newPath = "Uploaded/" + newId + ".mp3";
         int fileSize = Integer.parseInt(size);
         Music toUpload = new Music(newId, title, author, year, tagsSplitted, 0,newPath, fileSize);
         Socket s = sessions.get(username);
 
         try {
             File targetDir = new File("Uploaded");
-            File file = new File(targetDir, Integer.toString(newId));
+            File file = new File(targetDir, Integer.toString(newId) + ".mp3");
             FileOutputStream fout = new FileOutputStream(file);
             InputStream fin = s.getInputStream();
 

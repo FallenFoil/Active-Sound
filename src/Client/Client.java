@@ -69,16 +69,19 @@ public class Client{
         });
 
         this.menu.addOption("Download", ()->{
-            System.out.println("Music's IDs (Separated by ','):\n$ ");
-            String ids = scan.nextLine();
+            System.out.print("Music's IDs (Separated by ','):\n$ ");
+            String ids = scan.nextLine().toLowerCase().replaceAll("\\s+", "");
             String[] idsSplit = ids.split("[,]");
             try {
                 for(String id : idsSplit) {
                     this.activeSound.download(Integer.parseInt(id), this.username, 0);
                 }
             }
-            catch (Exception e){
+            catch (MusicNotFoundException e){
                 System.out.println(e.getMessage());
+            }
+            catch (NumberFormatException e){
+                System.out.println("Wrong Input");
             }
 
             this.menu.start();
@@ -100,16 +103,19 @@ public class Client{
         });
 
         this.menu.addOption("Download", ()->{
-            System.out.println("Music's IDs (Separated by ','):\n$ ");
-            String ids = scan.nextLine();
+            System.out.print("Music's IDs (Separated by ','):\n$ ");
+            String ids = scan.nextLine().toLowerCase().replaceAll("\\s+", "");
             String[] idsSplit = ids.split("[,]");
             try {
                 for(String id : idsSplit) {
                     this.activeSound.download(Integer.parseInt(id), this.username, 0);
                 }
             }
-            catch (Exception e){
+            catch (MusicNotFoundException e){
                 System.out.println(e.getMessage());
+            }
+            catch (NumberFormatException e){
+                System.out.println("Wrong Input");
             }
 
             this.menu.start();
@@ -124,8 +130,8 @@ public class Client{
 
             int year = validIntegerInput("Year:\n$ ", scan, -1);
 
-            System.out.print("Tags (separated by '|'):\n$ ");
-            String tags = scan.nextLine();
+            System.out.print("Tags (separated by ','):\n$ ");
+            String tags = scan.nextLine().toLowerCase().replaceAll("\\s+", "");
 
             System.out.print("Path:\n$ ");
             String path = scan.nextLine();

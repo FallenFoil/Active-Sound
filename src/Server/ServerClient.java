@@ -46,7 +46,8 @@ public class ServerClient implements Runnable{
                                 out.println("No");
                                 out.flush();
                                 break;
-                            }if(new File("Uploaded/"+args[1]).length() == 0 ){
+                            }
+                            if(new File("Uploaded/" + args[1] + ".mp3").length() == 0 ){
                                 out.println("No");
                                 out.flush();
                                 this.app.removeMusic(Integer.parseInt(args[1]));
@@ -57,10 +58,11 @@ public class ServerClient implements Runnable{
                                 break;
                             }
                         case "upload":
+                            String[] realArgs = str.split(" ;");
                             synchronized (this) {
-                                this.app.upload(args[1], args[2], Integer.parseInt(args[3]), args[4], args[5], this.id, args[7]);
-                                break;
+                                this.app.upload(realArgs[1], realArgs[2], Integer.parseInt(realArgs[3]), realArgs[4], realArgs[5], this.id, realArgs[7]);
                             }
+                            break;
                         case "search":
                             StringBuilder sb = new StringBuilder();
                             if(args.length == 1){
