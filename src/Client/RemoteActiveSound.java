@@ -170,4 +170,24 @@ public class RemoteActiveSound implements ActiveSound {
 
         return musics;
     }
+
+    public List<String> getNotifications(){
+        this.out.println("getNotifications");
+        this.out.flush();
+
+        List<String> notifications = new ArrayList<>();
+        try{
+            String str = in.readLine();
+            if(!str.isEmpty()){
+                String[] args = str.split("[|]");
+                notifications.addAll(Arrays.asList(args));
+            }
+
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        return notifications;
+    }
 }

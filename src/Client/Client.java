@@ -92,6 +92,37 @@ public class Client{
         this.menu.start();
     }
 
+    private void notificationsPage(List<String> notifications){
+        this.menu.clear();
+
+        List<String> header = new ArrayList<>();
+        header.add("Title");
+        header.add("Author");
+        header.add("Date");
+        this.menu.addTableHeader(header);
+
+        if(!notifications.isEmpty()){
+            for(String str : notifications){
+                List<String> notification = Arrays.asList(str.split("[;]"));
+                this.menu.addTableData(notification);
+            }
+        }
+
+        this.menu.addOption("Next Page", ()->{
+            this.menu.increaseMinMax();
+            this.menu.start();
+        });
+
+        this.menu.addOption("Previous Page", ()->{
+            this.menu.decreaseMinMax();
+            this.menu.start();
+        });
+
+        this.menu.addOption("Back", this::mainPage);
+
+        this.menu.start();
+    }
+
     private void mainPage(){
         Scanner scan = new Scanner(System.in);
         this.menu.clear();
@@ -144,6 +175,10 @@ public class Client{
             }
 
             this.menu.start();
+        });
+
+        this.menu.addOption("Notifications", ()->{
+            notificationsPage(this.activeSound.getNotifications());
         });
 
         this.menu.addOption("Logoff", ()->{

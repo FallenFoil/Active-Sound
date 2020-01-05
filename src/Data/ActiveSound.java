@@ -15,7 +15,9 @@ public interface ActiveSound {
 
     void download(int id, String username, int size) throws MusicNotFoundException;
 
-    //A String tags tem o seguinte formato: <tag>|<tag>|<tag>|...
+    //A String tags tem o seguinte formato: <tag>,<tag>,<tag>,...
     List<String> search(String tags);
+
+    List<String> getNotifications();
 }
 

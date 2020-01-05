@@ -4,11 +4,10 @@ import Data.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-
 
 public class ActiveSound implements Data.ActiveSound {
     private Users users;
@@ -16,6 +15,8 @@ public class ActiveSound implements Data.ActiveSound {
     private HashMap<String, Socket> sessions;
     private Lock sessionsLock;
     private volatile RequestQueue queue = new RequestQueue();
+    private LinkedList<String> notifications;
+    private Lock notificationsLock;
 
     public ActiveSound(){
         this.users = new Users();
@@ -24,6 +25,8 @@ public class ActiveSound implements Data.ActiveSound {
         this.sessionsLock = new ReentrantLock();
         this.users.put("admin", "admin");
         populateServer();
+        this.notifications = new LinkedList<>();
+        this.notificationsLock = new ReentrantLock();
     }
 
     public void populateServer(){
@@ -151,8 +154,7 @@ public class ActiveSound implements Data.ActiveSound {
         this.sessionsLock.unlock();
     }
 
-    public void upload(String title, String author, int year, String tags, String path, String username ,String size)
-            throws FileNotFoundException {
+    public void upload(String title, String author, int year, String tags, String path, String username ,String size) throws FileNotFoundException {
         List<String> tagsSplitted = new ArrayList<>(Arrays.asList( tags.split("[,]")));
         int newId = musics.getNewId();
         String newPath = "Uploaded/" + newId + ".mp3";
@@ -178,7 +180,12 @@ public class ActiveSound implements Data.ActiveSound {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        musics.add(toUpload);
+        this.musics.add(toUpload);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        this.notificationsLock.lock();
+        this.notifications.addFirst(title + ";" + author + ";" + formatter.format(new Date()));
+        this.notificationsLock.unlock();
     }
 
     public void download(int id, String username, int size) throws MusicNotFoundException {
@@ -226,5 +233,13 @@ public class ActiveSound implements Data.ActiveSound {
 
     public RequestQueue getQueue(){
         return queue;
+    }
+
+    public List<String> getNotifications(){
+        this.notificationsLock.lock();
+        List<String> res = new ArrayList<>(this.notifications);
+        this.notificationsLock.unlock();
+
+        return res;
     }
 }

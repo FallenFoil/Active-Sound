@@ -82,6 +82,15 @@ public class ServerClient implements Runnable{
                             out.println("0");
                             out.flush();
                             break;
+                        case "getNotifications":
+                            StringBuilder sb2 = new StringBuilder();
+
+                            for(String notification : this.app.getNotifications()){
+                                sb2.append(notification).append("|");
+                            }
+                            out.println(sb2.toString());
+                            out.flush();
+                            break;
                         default:
                             break;
                     }
