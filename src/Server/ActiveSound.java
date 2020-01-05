@@ -181,7 +181,7 @@ public class ActiveSound implements Data.ActiveSound {
             e.printStackTrace();
         }
         this.musics.add(toUpload);
-
+        this.users.get(username).addUpload(toUpload.getId());
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         this.notificationsLock.lock();
         this.notifications.addFirst(title + ";" + author + ";" + formatter.format(new Date()));
@@ -210,6 +210,7 @@ public class ActiveSound implements Data.ActiveSound {
                 queue.removeDownload(username);
                 toDownload.downloadIncrement();
                 download.join();
+                users.get(username).addDownload(id);
             }
         }catch (Exception e){
 
