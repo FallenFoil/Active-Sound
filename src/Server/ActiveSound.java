@@ -199,12 +199,9 @@ public class ActiveSound implements Data.ActiveSound {
             out.println("Preparing download " + toDownload.size());
             out.flush();
             if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok")){
-                System.out.println("Aqui");
                 queue.addRequest(new Request(id,username));
-                System.out.println("ISTO");
                 while(!queue.containsDownload(username)){
                 }
-                System.out.println("ISTO2");
                 Thread download = new Thread(new DownloadThread(toDownload,s));
                 download.start();
                 queue.removeDownload(username);
