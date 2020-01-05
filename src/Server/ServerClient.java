@@ -52,11 +52,15 @@ public class ServerClient implements Runnable{
                                 this.app.removeMusic(Integer.parseInt(args[1]));
                                 break;
                             }
-                            this.app.download(Integer.parseInt(args[1]),this.id,0);
-                            break;
+                            synchronized (this) {
+                                this.app.download(Integer.parseInt(args[1]), this.id, 0);
+                                break;
+                            }
                         case "upload":
-                            this.app.upload(args[1],args[2],Integer.parseInt(args[3]),args[4],args[5],this.id,args[7]);
-                            break;
+                            synchronized (this) {
+                                this.app.upload(args[1], args[2], Integer.parseInt(args[3]), args[4], args[5], this.id, args[7]);
+                                break;
+                            }
                         case "search":
                             StringBuilder sb = new StringBuilder();
                             if(args.length == 1){

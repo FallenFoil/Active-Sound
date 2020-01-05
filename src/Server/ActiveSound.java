@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static Server.Server.MAXDOWN;
 
 
 public class ActiveSound implements Data.ActiveSound {
@@ -170,22 +169,15 @@ public class ActiveSound implements Data.ActiveSound {
             int count, x = 0;
             while (x < fileSize &&(count = fin.read(bytes)) > 0 ) {
                 x += count;
-                System.out.println("coisas");
                 fout.write(bytes, 0, count);
-                System.out.println(bytes);
                 fout.flush();
             }
-            System.out.println("saiu");
             fout.flush();
             fout.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         musics.add(toUpload);
-        Music m = musics.get(newId);
-        String musica = m.toString();
-
-        System.out.println(musica);
     }
 
     public void download(int id, String username, int size) throws MusicNotFoundException {
@@ -208,6 +200,7 @@ public class ActiveSound implements Data.ActiveSound {
                 Thread download = new Thread(new DownloadThread(toDownload,s));
                 download.start();
                 queue.removeDownload(username);
+                toDownload.downloadIncrement();
                 download.join();
             }
         }catch (Exception e){

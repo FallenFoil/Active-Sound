@@ -19,7 +19,7 @@ public class RequestQueue {
         currentDownloads = new HashMap<>();
         requests = 0;
         downloading = 0;
-        MAXDOWN = 10;
+        MAXDOWN = 2;
         lock = new ReentrantLock();
     }
 
@@ -33,6 +33,7 @@ public class RequestQueue {
     public void nextRequest(){
         if(requests == 0) return;
         while(downloading == MAXDOWN){
+            System.out.println("Tou a espera viado");
         }
         if(!currentDownloads.containsKey(requestQueue.peek().getUsername())){
             lock.lock();

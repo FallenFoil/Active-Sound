@@ -92,15 +92,17 @@ public class RemoteActiveSound implements ActiveSound {
         this.out.flush();
 
         try {
-            InputStream in = new FileInputStream(toUpload);
-            OutputStream out = socket.getOutputStream();
-            byte[] bytes = new byte[10 * 1024];
-            int count;
-            while ((count = in.read(bytes)) > 0) {
-                out.write(bytes, 0, count);
-                out.flush();
+            synchronized (this) {
+                InputStream in = new FileInputStream(toUpload);
+                OutputStream out = socket.getOutputStream();
+                byte[] bytes = new byte[10 * 1024];
+                int count;
+                while ((count = in.read(bytes)) > 0) {
+                    out.write(bytes, 0, count);
+                    out.flush();
+                }
+                in.close();
             }
-            in.close();
 
         } catch (Exception e){
             e.printStackTrace();
@@ -120,21 +122,22 @@ public class RemoteActiveSound implements ActiveSound {
                 int fileSize = Integer.parseInt(str.split(" ")[2]);
                 this.out.println("ok");
                 this.out.flush();
+                synchronized (this) {
+                    InputStream fin = socket.getInputStream();
+                    File targetDir = new File("Downloaded");
+                    File file = new File(targetDir, username + id + ".mp3");
+                    FileOutputStream fout = new FileOutputStream(file);
 
-                InputStream fin = socket.getInputStream();
-                File targetDir = new File("Downloaded");
-                File file = new File(targetDir, username + id + ".mp3");
-                FileOutputStream fout = new FileOutputStream(file);
-
-                byte[] bytes = new byte[16 * 1024];
-                int count, x = 0;
-                while (x < fileSize && (count = fin.read(bytes)) > 0) {
-                    fout.write(bytes, 0, count);
-                    x += count;
+                    byte[] bytes = new byte[16 * 1024];
+                    int count, x = 0;
+                    while (x < fileSize && (count = fin.read(bytes)) > 0) {
+                        fout.write(bytes, 0, count);
+                        x += count;
+                        fout.flush();
+                    }
                     fout.flush();
+                    fout.close();
                 }
-                fout.flush();
-                fout.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
