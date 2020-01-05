@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RequestQueue {
@@ -12,6 +13,7 @@ public class RequestQueue {
     private int downloading;
     private int requests;
     private ReentrantLock lock;
+    private Condition condition;
     private int MAXDOWN;
 
     public RequestQueue(){
@@ -21,24 +23,39 @@ public class RequestQueue {
         downloading = 0;
         MAXDOWN = 2;
         lock = new ReentrantLock();
+        condition = lock.newCondition();
     }
 
     public void addRequest(Request q){
         lock.lock();
         requestQueue.add(q);
         requests++;
+        condition.signalAll();
         lock.unlock();
+
+    }
+
+    public void await(){
+        try{
+            condition.await();
+        }
+        catch (Exception e){
+
+        }
+
     }
 
     public void nextRequest(){
-        if(requests == 0) return;
+        while(requests == 0) await();
+
         while(downloading == MAXDOWN){
-            System.out.println("Tou a espera viado");
+            await();
         }
         if(!currentDownloads.containsKey(requestQueue.peek().getUsername())){
             lock.lock();
             Request r = requestQueue.remove();
             currentDownloads.put(r.getUsername(),r.musicId);
+            condition.signalAll();
             downloading++;
             requests--;
             lock.unlock();
@@ -51,6 +68,7 @@ public class RequestQueue {
                 currentDownloads.put(q.getUsername(),q.getMusicId());
                 downloading++;
                 requests--;
+                condition.signalAll();
                 lock.unlock();
                 return;
                 }
