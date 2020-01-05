@@ -17,6 +17,15 @@ public class ServerClient implements Runnable{
         this.id = null;
     }
 
+    private String argsNotNull(String[] args, int index){
+        if(index >= args.length){
+            return "";
+        }
+        else{
+            return args[index];
+        }
+    }
+
     public void run(){
         try{
             System.out.println("Connection established");
@@ -31,25 +40,25 @@ public class ServerClient implements Runnable{
                 try {
                     switch (args[0]) {
                         case "login":
-                            this.app.login(args[1], args[2],so);
+                            this.app.login(argsNotNull(args, 1), argsNotNull(args, 2),so);
                             out.println("0");
                             out.flush();
-                            this.id = args[1];
+                            this.id = argsNotNull(args, 1);
                             break;
                         case "register":
-                            this.app.register(args[1], args[2]);
+                            this.app.register(argsNotNull(args, 1), argsNotNull(args, 2));
                             out.println("0");
                             out.flush();
                             break;
                         case "download":
                             synchronized (this) {
-                                this.app.download(Integer.parseInt(args[1]), this.id, 0);
+                                this.app.download(Integer.parseInt(argsNotNull(args, 1)), this.id, 0);
                             }
                             break;
                         case "upload":
                             String[] realArgs = str.split(" ;");
                             synchronized (this) {
-                                this.app.upload(realArgs[1], realArgs[2], Integer.parseInt(realArgs[3]), realArgs[4], realArgs[5], this.id, realArgs[7]);
+                                this.app.upload(argsNotNull(realArgs, 1), argsNotNull(realArgs, 2), Integer.parseInt(argsNotNull(realArgs, 3)), argsNotNull(realArgs, 4), argsNotNull(realArgs, 5), this.id, argsNotNull(realArgs, 7));
                             }
                             break;
                         case "search":
@@ -69,7 +78,7 @@ public class ServerClient implements Runnable{
                             out.flush();
                             break;
                         case "logoff":
-                            this.app.logOff(args[1]);
+                            this.app.logOff(argsNotNull(args, 1));
                             out.println("0");
                             out.flush();
                             break;

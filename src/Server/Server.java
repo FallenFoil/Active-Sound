@@ -1,10 +1,36 @@
 package Server;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Objects;
 
 public class Server {
     public static void main(String[] args){
+        File dir = new File("Uploaded");
+        if(dir.exists()){
+            for(File file: dir.listFiles()){
+                if (!file.isDirectory()){
+                    file.delete();
+                }
+            }
+        }
+        else{
+            dir.mkdir();
+        }
+
+        dir = new File("Downloaded");
+        if(dir.exists()){
+            for(File file: dir.listFiles()){
+                if (!file.isDirectory()){
+                    file.delete();
+                }
+            }
+        }
+        else{
+            dir.mkdir();
+        }
+
         try{
             ServerSocket s = new ServerSocket(25567);
             ActiveSound app = new ActiveSound();
