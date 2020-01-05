@@ -11,36 +11,36 @@ ActiveSound is sharing platform that allows musicians to share their creations. 
 
 ## Functionalities
 
-* __Autenticação__ e __registo__ de clientes;
-* __Publicar__ uma música, fornecendo dados sobre ele (__título__, __intérprete__, __ano__ e __etiquetas__) e atribuir-lhe um __id__;
-* Efetuar uma procura de música, enviando uma etiqueta a procurar e recebendo de volta uma lista com:
+* __Authentication__ and __register__ of users;
+* __Publish__ (upload) a music by providing data about it (__title__, __interpreter__, __year__, and __tags__) and assign it an __id__;
+* Perform a music search by sending a tag to search for and getting back a playlist with:
   * __Id__;
-  * __Titulo__;
-  * __Interprete__;
-  * __Ano__;
-  * __Etiquetas__;
-  * __Nº downloads__.
-* Fazer download de uma música dando o __id__;
-* Um cliente não pode ter mais do que um __socket__.
+  * __Title__;
+  * __Interpreter__;
+  * __Year__;
+  * __Tags__;
+  * __Nº Downloads__.
+* Download a music by giving its __id__;
+* A client cannot have more than one __socket__
 
 ## Extras
 
-### Downloads
+### Downloads (done)
 
-* Ter numero máximo de downloads (_MAXDOWN_);
-* Quando o máximo é atingido os pedidos seguintes devem esperar;
-* Ter uma boa estratégia de escalonamento de downloads.
+* Have maximum number of downloads (_MAXDOWN_);
+* When the maximum is reached the following requests must wait;
+* Have a good download scheduling strategy.
 
 ### Notifications
 
-* Receber notificações de novos uploads de música, enquanto o cliente estiver ligado;
-* A notificação deve conter o __título__ e o __autor__;
-* Receber notificações mesmo durante outras operações.
+* Receive notifications of new music uploads while the customer is on;
+* The notification must contain the __title__ and __author__;
+* Receive notifications even during other operations.
 
 ### File Size
 
-* Não se pode assumir que os ficheiros cabem todos na memória;
-* Ter um tamanho __limite__ (_MAXSIZE_) em bytes, no cliente e no servidor.
+* It cannot be assumed that the files all fit in memory;
+* Have a __limit__ (_MAXSIZE_) size in bytes on both client and server.
 
 ---
 
