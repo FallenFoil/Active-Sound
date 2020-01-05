@@ -60,13 +60,13 @@ public class Client{
             }
         }
 
-        this.menu.addOption("Next Page", ()->{
-            this.menu.increaseMinMax();
+        this.menu.addOption("Previous Page", ()->{
+            this.menu.decreaseMinMax();
             this.menu.start();
         });
 
-        this.menu.addOption("Previous Page", ()->{
-            this.menu.decreaseMinMax();
+        this.menu.addOption("Next Page", ()->{
+            this.menu.increaseMinMax();
             this.menu.start();
         });
 
@@ -111,13 +111,13 @@ public class Client{
             }
         }
 
-        this.menu.addOption("Next Page", ()->{
-            this.menu.increaseMinMax();
+        this.menu.addOption("Previous Page", ()->{
+            this.menu.decreaseMinMax();
             this.menu.start();
         });
 
-        this.menu.addOption("Previous Page", ()->{
-            this.menu.decreaseMinMax();
+        this.menu.addOption("Next Page", ()->{
+            this.menu.increaseMinMax();
             this.menu.start();
         });
 
@@ -131,7 +131,7 @@ public class Client{
         this.menu.clear();
 
         this.menu.addOption("Search", ()->{
-            System.out.print("Music tag:\n$ ");
+            System.out.print("Music tag (empty for all musics):\n$ ");
             String tag = scan.nextLine();
             searchPage(this.activeSound.search(tag));
         });
