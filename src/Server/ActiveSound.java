@@ -184,7 +184,7 @@ public class ActiveSound implements Data.ActiveSound {
         this.users.get(username).addUpload(toUpload.getId());
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         this.notificationsLock.lock();
-        this.notifications.addFirst(title + ";" + author + ";" + formatter.format(new Date()));
+        this.notifications.addFirst(title + ";" + author + ";" + tags + ";" + formatter.format(new Date()));
         this.notificationsLock.unlock();
     }
 

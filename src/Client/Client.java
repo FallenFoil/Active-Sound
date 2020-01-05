@@ -98,6 +98,7 @@ public class Client{
         List<String> header = new ArrayList<>();
         header.add("Title");
         header.add("Author");
+        header.add("Tags");
         header.add("Date");
         this.menu.addTableHeader(header);
 
