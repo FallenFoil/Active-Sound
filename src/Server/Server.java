@@ -30,6 +30,11 @@ public class Server {
             dir.mkdir();
         }
 
+        dir = new File("ToUpload");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+
         try{
             ServerSocket s = new ServerSocket(25567);
             ActiveSound app = new ActiveSound();

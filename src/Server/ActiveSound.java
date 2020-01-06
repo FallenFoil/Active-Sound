@@ -123,7 +123,10 @@ public class ActiveSound implements Data.ActiveSound {
         String newPath = "Uploaded/" + newId + ".mp3";
         int fileSize = Integer.parseInt(size);
         Music toUpload = new Music(newId, title, author, year, tagsSplitted, 0,newPath, fileSize);
+        
+        this.sessionsLock.lock();
         Socket s = sessions.get(username);
+        this.sessionsLock.unlock();
 
         try {
             File targetDir = new File("Uploaded");
@@ -162,7 +165,9 @@ public class ActiveSound implements Data.ActiveSound {
         }
         try {
             Music toDownload = musics.get(id);
+            this.sessionsLock.lock();
             Socket s = sessions.get(username);
+            this.sessionsLock.unlock();
             PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
             out.println("Preparing download " + toDownload.size());
             out.flush();

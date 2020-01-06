@@ -82,7 +82,7 @@ public class RemoteActiveSound implements ActiveSound {
     public void upload(String title, String author, int year, String tags, String path, String username, String size) throws FileNotFoundException, UploadErrorException{
         String[] pathSplitted = path.split("[.]");
         if(pathSplitted.length == 1) throw new FileNotFoundException("Invalid file format");
-        if(!pathSplitted[1].equals("mp3")) throw new FileNotFoundException("Invalid file format");
+        if(!pathSplitted[pathSplitted.length-1].equals("mp3")) throw new FileNotFoundException("Invalid file format");
 
         String newPath = "ToUpload/" + path;
         File toUpload = new File(newPath);
