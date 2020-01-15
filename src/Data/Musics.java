@@ -72,7 +72,11 @@ public class Musics {
 
     public void remove(int id){
         musicsLock.writeLock();
+            List<String> tagsRemove = musics.get(id).getTags();
             musics.remove(id);
+            for(String t : tagsRemove){
+                tags.get(t).remove((Integer) id);
+                }
         musicsLock.writeUnlock();
     }
 
