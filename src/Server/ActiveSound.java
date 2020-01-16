@@ -128,13 +128,13 @@ public class ActiveSound implements Data.ActiveSound {
         Socket s = sessions.get(username);
         this.sessionsLock.unlock();
 
-        try {
+        try{
             File targetDir = new File("Uploaded");
             File file = new File(targetDir, newId + ".mp3");
             FileOutputStream fout = new FileOutputStream(file);
             InputStream fin = s.getInputStream();
 
-            byte[] bytes = new byte[16 * 1024];
+            byte[] bytes = new byte[10 * 1024];
             int count, x = 0;
             while (x < fileSize &&(count = fin.read(bytes)) > 0 ) {
                 x += count;
@@ -173,7 +173,6 @@ public class ActiveSound implements Data.ActiveSound {
             out.flush();
             if(new BufferedReader(new InputStreamReader(s.getInputStream())).readLine().equals("ok")){
                 queue.addRequest(new Request(id,username));
-                //noinspection StatementWithEmptyBody
                 while(!queue.containsDownload(username)){
                     queue.await();
                 };
@@ -188,7 +187,6 @@ public class ActiveSound implements Data.ActiveSound {
         catch(Exception e){
             throw new DownloadErrorException();
         }
-
     }
 
     public List<String> search(String tag){
