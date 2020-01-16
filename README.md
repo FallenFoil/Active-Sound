@@ -4,11 +4,6 @@
 
 ActiveSound is sharing platform that allows musicians to share their creations. This platform uses java 11.
 
-## Deadline
-
-* __3 de janeiro 2020__
-* [Relatorio](https://www.overleaf.com/1113612863crkbvmtnyjhc)
-
 ## Functionalities
 
 * __Authentication__ and __register__ of users;
