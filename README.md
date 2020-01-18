@@ -18,21 +18,20 @@ ActiveSound is sharing platform that allows musicians to share their creations. 
 * Download a music by giving its __id__;
 * A client cannot have more than one __socket__
 
-## Extras
+### Extras
 
-### Downloads (done)
+#### Downloads
 
 * Have maximum number of downloads (_MAXDOWN_);
 * When the maximum is reached the following requests must wait;
 * Have a good download scheduling strategy.
 
-### Notifications
+#### Notifications
 
 * Receive notifications of new music uploads while the customer is on;
 * The notification must contain the __title__ and __author__;
-* Receive notifications even during other operations.
 
-### File Size
+#### File Size
 
 * It cannot be assumed that the files all fit in memory;
 * Have a __limit__ (_MAXSIZE_) size in bytes on both client and server.
